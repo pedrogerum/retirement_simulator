@@ -8,6 +8,19 @@ import plotly.io as pio
 
 pio.templates.default = "plotly_white"
 
+# Historical events for market context visualization
+HISTORICAL_EVENTS_US = {
+    1929: {"name": "Black Tuesday", "color": "red", "description": "Stock market crash triggering the Great Depression"},
+    2000: {"name": "Dot-com Burst", "color": "red", "description": "Collapse of technology stock bubble"},
+    2008: {"name": "Financial Crisis", "color": "red", "description": "Global financial crisis and housing market collapse"},
+}
+
+HISTORICAL_EVENTS_BR = {
+    1990: {"name": "Collor Plan", "color": "red", "description": "Asset freeze and failed inflation control"},
+    1994: {"name": "Real Plan", "color": "green", "description": "Successful currency stabilization program"},
+    2021: {"name": "Post-Pandemic Inflation", "color": "orange", "description": "Negative real returns due to high inflation"},
+}
+
 st.set_page_config(layout="wide", page_title="Retirement Simulator")
 
 st.title("Retirement Monte Carlo Simulator")
@@ -20,6 +33,59 @@ br_market_data_path = os.path.join(current_dir, 'market_data_br.csv')
 
 us_returns = load_market_data(us_market_data_path)
 br_returns = load_market_data(br_market_data_path)
+
+# Load full DataFrames for historical events chart
+us_market_df = pd.read_csv(us_market_data_path).set_index('Year')
+br_market_df = pd.read_csv(br_market_data_path).set_index('Year')
+
+def create_historical_events_chart(market_df, events_dict, market_name):
+    """Create an area line chart with historical events annotated."""
+    fig = go.Figure()
+
+    # Add area line chart for real returns
+    fig.add_trace(go.Scatter(
+        x=market_df.index,
+        y=market_df['Real_Return'] * 100,
+        mode='lines',
+        fill='tozeroy',
+        name='Real Return',
+        line=dict(color='steelblue', width=1),
+        fillcolor='rgba(70, 130, 180, 0.3)'
+    ))
+
+    # Add vertical dashed lines and markers for events
+    for year, event in events_dict.items():
+        if year in market_df.index:
+            return_value = market_df.loc[year, 'Real_Return'] * 100
+
+            # Vertical dashed line
+            fig.add_vline(x=year, line_dash="dash", line_color="gray", opacity=0.5)
+
+            # Scatter point for the event
+            fig.add_trace(go.Scatter(
+                x=[year],
+                y=[return_value],
+                mode='markers+text',
+                marker=dict(size=12, color=event['color'], symbol='circle'),
+                text=[event['name']],
+                textposition='top center',
+                textfont=dict(size=10),
+                name=event['name'],
+                showlegend=False
+            ))
+
+    fig.update_layout(
+        title=f"Historical Real Returns - {market_name}",
+        xaxis_title="Year",
+        yaxis_title="Real Return (%)",
+        hovermode="x unified",
+        showlegend=False
+    )
+
+    # Add zero line
+    fig.add_hline(y=0, line_dash="solid", line_color="black", opacity=0.3)
+
+    return fig
 
 # UI for SimulationParams
 st.sidebar.header("Simulation Parameters")
@@ -230,9 +296,25 @@ if st.session_state['results'] is not None:
         spending_df = pd.DataFrame(spending_sensitivity).T.reset_index()
         spending_df.columns = ['Spending Variation', 'Annual Spending', 'Success Rate', 'Median Final Balance']
         
-        fig_spending = go.Figure(go.Bar(
-            x=spending_df['Annual Spending'], y=spending_df['Success Rate'],
-            text=spending_df['Success Rate'].apply(lambda x: f'{x:.1f}%'), textposition='auto'
+        fig_spending = go.Figure()
+        # Lollipop stems (thin lines from 0 to value)
+        for i, row in spending_df.iterrows():
+            fig_spending.add_trace(go.Scatter(
+                x=[row['Annual Spending'], row['Annual Spending']],
+                y=[0, row['Success Rate']],
+                mode='lines',
+                line=dict(color='steelblue', width=2),
+                showlegend=False
+            ))
+        # Lollipop dots and labels
+        fig_spending.add_trace(go.Scatter(
+            x=spending_df['Annual Spending'],
+            y=spending_df['Success Rate'],
+            mode='markers+text',
+            marker=dict(size=12, color='steelblue'),
+            text=spending_df['Success Rate'].apply(lambda x: f'{x:.1f}%'),
+            textposition='top center',
+            showlegend=False
         ))
         fig_spending.update_layout(title="Success Rate vs. Annual Spending", xaxis_title="Annual Spending in Retirement ($)", yaxis_title="Success Rate (%)")
         st.plotly_chart(fig_spending, use_container_width=True, config=plotly_config)
@@ -243,19 +325,51 @@ if st.session_state['results'] is not None:
         ret_age_df = pd.DataFrame(retirement_age_sensitivity).T.reset_index()
         ret_age_df.columns = ['Retirement Age', 'Success Rate', 'Median Final Balance', 'p5', 'p95']
         
-        # Chart 1: Success Rate vs. Retirement Age
-        fig_ret_age_success = go.Figure(go.Bar(
-            x=ret_age_df['Retirement Age'], y=ret_age_df['Success Rate'],
-            text=ret_age_df['Success Rate'].apply(lambda x: f'{x:.1f}%'), textposition='auto'
+        # Chart 1: Success Rate vs. Retirement Age (Lollipop)
+        fig_ret_age_success = go.Figure()
+        # Lollipop stems
+        for i, row in ret_age_df.iterrows():
+            fig_ret_age_success.add_trace(go.Scatter(
+                x=[row['Retirement Age'], row['Retirement Age']],
+                y=[0, row['Success Rate']],
+                mode='lines',
+                line=dict(color='forestgreen', width=2),
+                showlegend=False
+            ))
+        # Lollipop dots and labels
+        fig_ret_age_success.add_trace(go.Scatter(
+            x=ret_age_df['Retirement Age'],
+            y=ret_age_df['Success Rate'],
+            mode='markers+text',
+            marker=dict(size=12, color='forestgreen'),
+            text=ret_age_df['Success Rate'].apply(lambda x: f'{x:.1f}%'),
+            textposition='top center',
+            showlegend=False
         ))
         fig_ret_age_success.update_layout(title="Success Rate vs. Retirement Age", xaxis_title="Retirement Age", yaxis_title="Success Rate (%)")
         st.plotly_chart(fig_ret_age_success, use_container_width=True, config=plotly_config)
         figs.append(fig_ret_age_success)
 
-        # Chart 2: Median Final Balance vs. Retirement Age
-        fig_ret_age_balance = go.Figure(go.Bar(
-            x=ret_age_df['Retirement Age'], y=ret_age_df['Median Final Balance'],
-            text=ret_age_df['Median Final Balance'].apply(lambda x: f'${x:,.0f}'), textposition='auto'
+        # Chart 2: Median Final Balance vs. Retirement Age (Lollipop)
+        fig_ret_age_balance = go.Figure()
+        # Lollipop stems
+        for i, row in ret_age_df.iterrows():
+            fig_ret_age_balance.add_trace(go.Scatter(
+                x=[row['Retirement Age'], row['Retirement Age']],
+                y=[0, row['Median Final Balance']],
+                mode='lines',
+                line=dict(color='darkorange', width=2),
+                showlegend=False
+            ))
+        # Lollipop dots and labels
+        fig_ret_age_balance.add_trace(go.Scatter(
+            x=ret_age_df['Retirement Age'],
+            y=ret_age_df['Median Final Balance'],
+            mode='markers+text',
+            marker=dict(size=12, color='darkorange'),
+            text=ret_age_df['Median Final Balance'].apply(lambda x: f'${x:,.0f}'),
+            textposition='top center',
+            showlegend=False
         ))
         fig_ret_age_balance.update_layout(title="Median Final Balance vs. Retirement Age", xaxis_title="Retirement Age", yaxis_title="Median Final Balance ($)")
         st.plotly_chart(fig_ret_age_balance, use_container_width=True, config=plotly_config)
@@ -269,7 +383,39 @@ if st.session_state['results'] is not None:
     st.write(f"Mean real return: {selected_returns.mean():.2%}")
     st.write(f"Std dev of real return: {selected_returns.std():.2%}")
 
-    # --- 7. Download PDF ---
+    # --- 7. Historical Market Context ---
+    st.write("---")
+    with st.expander("Historical Market Context", expanded=False):
+        # Select appropriate data and events based on market
+        if market_source == "US (S&P 500)":
+            market_df = us_market_df
+            events_dict = HISTORICAL_EVENTS_US
+            market_name = "S&P 500"
+        else:
+            market_df = br_market_df
+            events_dict = HISTORICAL_EVENTS_BR
+            market_name = "CDI (Brazil)"
+
+        # Create and display the historical events chart
+        fig_historical = create_historical_events_chart(market_df, events_dict, market_name)
+        st.plotly_chart(fig_historical, use_container_width=True, config=plotly_config)
+        figs.append(fig_historical)
+
+        # Events summary table
+        st.subheader("Key Historical Events")
+        events_data = []
+        for year, event in events_dict.items():
+            if year in market_df.index:
+                events_data.append({
+                    "Year": year,
+                    "Event": event['name'],
+                    "Real Return": f"{market_df.loc[year, 'Real_Return']:.1%}",
+                    "Description": event['description']
+                })
+        events_table = pd.DataFrame(events_data)
+        st.dataframe(events_table, hide_index=True, use_container_width=True)
+
+    # --- 8. Download PDF ---
     st.write("---")
     st.header("Download Report")
 
