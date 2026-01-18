@@ -10,18 +10,49 @@ from dataclasses import dataclass
 from typing import List, Tuple, Dict
 import os
 
-# 2024 US Federal Tax Brackets (Single Filer)
-# Treated as constant since they historically adjust for inflation
-TAX_BRACKETS = [
-    (11600, 0.10),
-    (47150, 0.12),
-    (100525, 0.22),
-    (191950, 0.24),
-    (243725, 0.32),
-    (609350, 0.35),
-    (float('inf'), 0.37)
-]
-STANDARD_DEDUCTION = 14600
+
+def load_us_tax_brackets(csv_path: str = None) -> Tuple[List[Tuple[float, float]], float]:
+    """Load US tax brackets and standard deduction from CSV."""
+    if csv_path is None:
+        csv_path = os.path.join(os.path.dirname(__file__), 'data', 'us_tax_brackets.csv')
+
+    df = pd.read_csv(csv_path)
+    brackets = []
+    standard_deduction = 0
+
+    for _, row in df.iterrows():
+        limit = float('inf') if row['bracket_limit'] == 'inf' else float(row['bracket_limit'])
+        rate = float(row['rate'])
+        brackets.append((limit, rate))
+        if pd.notna(row['standard_deduction']) and row['standard_deduction'] != '':
+            standard_deduction = float(row['standard_deduction'])
+
+    return brackets, standard_deduction
+
+
+def load_br_tax_brackets(csv_path: str = None) -> Tuple[List[Tuple[float, float, float]], float]:
+    """Load Brazil tax brackets and flat rate from CSV."""
+    if csv_path is None:
+        csv_path = os.path.join(os.path.dirname(__file__), 'data', 'br_tax_brackets.csv')
+
+    df = pd.read_csv(csv_path)
+    brackets = []
+    flat_rate = 0.10  # Default
+
+    for _, row in df.iterrows():
+        limit = float('inf') if row['bracket_limit'] == 'inf' else float(row['bracket_limit'])
+        rate = float(row['rate'])
+        deduction = float(row['deduction'])
+        brackets.append((limit, rate, deduction))
+        if pd.notna(row['flat_rate']) and row['flat_rate'] != '':
+            flat_rate = float(row['flat_rate'])
+
+    return brackets, flat_rate
+
+
+# Load tax brackets from CSV files
+TAX_BRACKETS, STANDARD_DEDUCTION = load_us_tax_brackets()
+TAX_BRACKETS_BR, FLAT_RATE_BR = load_br_tax_brackets()
 
 
 @dataclass
@@ -96,30 +127,20 @@ def calculate_tax(income: float) -> float:
     return tax
 
 
-# 2024 Brazil Federal Tax Brackets (Annual)
-# Formula: (Income * Rate) - Deductible Portion
-TAX_BRACKETS_BR = [
-    (26963.20, 0.0, 0.0),
-    (33919.80, 0.075, 2022.24),
-    (45012.60, 0.15, 4566.23),
-    (55976.16, 0.225, 7942.17),
-    (float('inf'), 0.275, 10740.98)
-]
-
 def calculate_tax_br(income: float) -> float:
     """Calculate Brazilian federal income tax on pre-tax withdrawals."""
-    return income * 0.10
+    return income * FLAT_RATE_BR
 
 
 def load_market_data(csv_path: str = None) -> pd.Series:
     """Load real (inflation-adjusted) S&P 500 returns from CSV"""
     if csv_path is None:
         # Prefer market_data.csv (has real returns)
-        market_data_path = os.path.join(os.path.dirname(__file__), 'market_data.csv')
+        market_data_path = os.path.join(os.path.dirname(__file__), 'data', 'market_data.csv')
         if os.path.exists(market_data_path):
             csv_path = market_data_path
         else:
-            csv_path = os.path.join(os.path.dirname(__file__), 'sp500_annual_returns.csv')
+            csv_path = os.path.join(os.path.dirname(__file__), 'data', 'sp500_annual_returns.csv')
 
     df = pd.read_csv(csv_path)
 
