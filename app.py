@@ -370,6 +370,13 @@ if st.session_state['results'] is not None:
 
     st.header(t("simulation_summary", L))
 
+    # Show assumptions info box based on selected market
+    with st.expander("ℹ️ " + t("simulation_details", L), expanded=False):
+        if market_source == "US (S&P 500)":
+            st.info(t("info_market_assumptions_us", L))
+        else:
+            st.info(t("info_market_assumptions_br", L))
+
     figs = []
 
     # --- 1. Main Metrics ---
@@ -848,6 +855,9 @@ if st.session_state['results'] is not None:
         st.error(t("sensitivity_warning_low", L))
     elif max_success < 80:
         st.warning(t("sensitivity_warning_medium", L))
+
+    # Explanation of how to read the heatmaps
+    st.info(t("info_sensitivity_explanation", L))
 
     st.session_state['figs'] = figs
 

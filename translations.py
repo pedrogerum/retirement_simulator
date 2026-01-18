@@ -523,6 +523,68 @@ TRANSLATIONS = {
         "EN": "P(portfolio survives to {age})",
         "PT": "P(patrimonio sobrevive ate {age})"
     },
+
+    # Info boxes - Assumptions explanations
+    "info_market_assumptions_us": {
+        "EN": """
+**Data Sources & Assumptions (US Market):**
+- **Market Returns:** S&P 500 real returns (inflation-adjusted) from 1928 to present
+- **Mortality Table:** US Social Security Administration 2021 life tables
+- **Tax Calculation:** US federal income tax brackets (2024), with standard deduction of $14,600
+- **Withdrawal Strategy:** Post-tax accounts (Roth) are used first, then pre-tax accounts (401k/IRA)
+""",
+        "PT": """
+**Fontes de Dados e Premissas (Mercado EUA):**
+- **Retornos de Mercado:** Retornos reais do S&P 500 (ajustados pela inflacao) de 1928 ate o presente
+- **Tabua de Mortalidade:** Tabuas de vida da Previdencia Social dos EUA 2021
+- **Calculo de Impostos:** Faixas de imposto de renda federal dos EUA (2024), com deducao padrao de $14.600
+- **Estrategia de Saque:** Contas pos-imposto (Roth) sao usadas primeiro, depois contas pre-imposto (401k/IRA)
+"""
+    },
+    "info_market_assumptions_br": {
+        "EN": """
+**Data Sources & Assumptions (Brazil Market):**
+- **Market Returns:** CDI real returns (inflation-adjusted) from 1995 to present
+- **Mortality Table:** Brazil IBGE 2021 life tables
+- **Tax Calculation:** Flat 10% tax rate on pre-tax withdrawals (simplified PGBL/VGBL taxation)
+- **Withdrawal Strategy:** Post-tax accounts (VGBL) are used first, then pre-tax accounts (PGBL)
+""",
+        "PT": """
+**Fontes de Dados e Premissas (Mercado Brasil):**
+- **Retornos de Mercado:** Retornos reais do CDI (ajustados pela inflacao) de 1995 ate o presente
+- **Tabua de Mortalidade:** Tabuas de vida do IBGE Brasil 2021
+- **Calculo de Impostos:** Aliquota fixa de 10% sobre saques pre-imposto (tributacao simplificada PGBL/VGBL)
+- **Estrategia de Saque:** Contas pos-imposto (VGBL) sao usadas primeiro, depois contas pre-imposto (PGBL)
+"""
+    },
+    "info_sensitivity_explanation": {
+        "EN": """
+**How to Read the Sensitivity Heatmaps:**
+
+The heatmaps show how your success probability changes when you adjust retirement age or spending:
+- **X-axis (horizontal):** Change in retirement age from your current selection (e.g., "+2" means retiring 2 years later)
+- **Y-axis (vertical):** Change in annual spending (e.g., "-10k" means spending $10,000 less per year)
+- **Colors:** Green = high success probability (good), Yellow = moderate risk, Red = high risk of running out of money
+
+**Example:** If you're at the center (0,0) with 70% success, and the cell at (+2, -10k) shows 90%, retiring 2 years later while spending $10k less would significantly improve your odds.
+
+**Left heatmap:** Shows probability of portfolio surviving to end age (ignores mortality)
+**Right heatmap:** Shows probability of money lasting your lifetime (accounts for mortality - more realistic)
+""",
+        "PT": """
+**Como Ler os Mapas de Calor de Sensibilidade:**
+
+Os mapas de calor mostram como sua probabilidade de sucesso muda quando voce ajusta a idade de aposentadoria ou os gastos:
+- **Eixo X (horizontal):** Mudanca na idade de aposentadoria em relacao a sua selecao atual (ex: "+2" significa aposentar 2 anos depois)
+- **Eixo Y (vertical):** Mudanca nos gastos anuais (ex: "-10k" significa gastar R$10.000 a menos por ano)
+- **Cores:** Verde = alta probabilidade de sucesso (bom), Amarelo = risco moderado, Vermelho = alto risco de ficar sem dinheiro
+
+**Exemplo:** Se voce esta no centro (0,0) com 70% de sucesso, e a celula em (+2, -10k) mostra 90%, aposentar 2 anos depois gastando R$10k a menos melhoraria significativamente suas chances.
+
+**Mapa da esquerda:** Mostra probabilidade do patrimonio sobreviver ate a idade final (ignora mortalidade)
+**Mapa da direita:** Mostra probabilidade do dinheiro durar sua vida (considera mortalidade - mais realista)
+"""
+    },
 }
 
 # Help text for parameters (tooltips)
