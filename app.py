@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from retirement_simulator import SimulationParams, run_monte_carlo, load_market_data, YearlyRecord
+from translations import t, h, TRANSLATIONS
 import os
 import plotly.graph_objects as go
 import plotly.io as pio
@@ -110,8 +111,21 @@ def run_sensitivity_grid(params, returns, retirement_ages, spending_levels, mort
 
 st.set_page_config(layout="wide", page_title="Retirement Simulator")
 
-st.title("Retirement Monte Carlo Simulator")
-st.write("Plan your financial future with historical market data simulations.")
+# Initialize language in session state
+if 'lang' not in st.session_state:
+    st.session_state['lang'] = 'EN'
+
+# Language selector at the very top of sidebar
+with st.sidebar:
+    lang = st.radio("🌐 Language / Idioma", ("English", "Portugues"),
+                    index=0 if st.session_state['lang'] == 'EN' else 1,
+                    horizontal=True)
+    st.session_state['lang'] = 'EN' if lang == "English" else 'PT'
+
+L = st.session_state['lang']
+
+st.title(t("main_title", L))
+st.write(t("main_subtitle", L))
 
 # Load market data
 us_market_data_path = os.path.join(current_dir, 'data', 'market_data.csv')
@@ -124,7 +138,7 @@ br_returns = load_market_data(br_market_data_path)
 us_market_df = pd.read_csv(us_market_data_path).set_index('Year')
 br_market_df = pd.read_csv(br_market_data_path).set_index('Year')
 
-def create_historical_events_chart(market_df, events_dict, market_name):
+def create_historical_events_chart(market_df, events_dict, market_name, lang="EN"):
     """Create an area line chart with historical events annotated."""
     fig = go.Figure()
 
@@ -134,7 +148,7 @@ def create_historical_events_chart(market_df, events_dict, market_name):
         y=market_df['Real_Return'] * 100,
         mode='lines',
         fill='tozeroy',
-        name='Real Return',
+        name=t("real_return", lang),
         line=dict(color='steelblue', width=1),
         fillcolor='rgba(70, 130, 180, 0.3)'
     ))
@@ -161,9 +175,9 @@ def create_historical_events_chart(market_df, events_dict, market_name):
             ))
 
     fig.update_layout(
-        title=f"Historical Real Returns - {market_name}",
-        xaxis_title="Year",
-        yaxis_title="Real Return (%)",
+        title=t("historical_real_returns", lang, market=market_name),
+        xaxis_title=t("year", lang),
+        yaxis_title=t("real_return_percent", lang),
         hovermode="x unified",
         showlegend=False
     )
@@ -216,7 +230,7 @@ def run_stress_test_simulation(starting_balance, annual_spending, years_in_retir
         'survived': ruin_year is None
     }
 
-def create_stress_test_chart(stress_results, events_dict, years_in_retirement):
+def create_stress_test_chart(stress_results, events_dict, years_in_retirement, lang="EN"):
     """Create a chart showing portfolio trajectories for each historical stress scenario."""
     fig = go.Figure()
 
@@ -257,9 +271,9 @@ def create_stress_test_chart(stress_results, events_dict, years_in_retirement):
             ))
 
     fig.update_layout(
-        title="Portfolio Stress Test: What If You Retired During These Events?",
-        xaxis_title="Years in Retirement",
-        yaxis_title="Portfolio Balance ($)",
+        title=t("stress_test_chart_title", lang),
+        xaxis_title=t("years_in_retirement", lang),
+        yaxis_title=t("portfolio_balance", lang),
         hovermode="x unified",
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01)
     )
@@ -270,34 +284,45 @@ def create_stress_test_chart(stress_results, events_dict, years_in_retirement):
     return fig
 
 # UI for SimulationParams
-st.sidebar.header("Simulation Parameters")
+st.sidebar.header(t("simulation_parameters", L))
 
 with st.sidebar:
-    st.subheader("Market Data Source")
-    market_source = st.radio("Select Market", ("US (S&P 500)", "Brazil (CDI)"), index=0)
+    st.subheader(t("market_data_source", L))
+    market_source = st.radio(t("select_market", L), ("US (S&P 500)", "Brazil (CDI)"), index=0,
+                             help=h("select_market", L))
 
-    st.subheader("Personal Details")
-    current_age = st.slider("Current Age", 0, 110, 35)
-    retirement_age = st.slider("Retirement Age", 55, 85, 65)
-    end_age = st.slider("End Age (of simulation)", retirement_age + 1, 110, 95)
+    st.subheader(t("personal_details", L))
+    current_age = st.slider(t("current_age", L), 0, 110, 35, help=h("current_age", L))
+    retirement_age = st.slider(t("retirement_age", L), 55, 85, 65, help=h("retirement_age", L))
+    end_age = st.slider(t("end_age", L), retirement_age + 1, 110, 95, help=h("end_age", L))
 
-    st.subheader("Current Savings (Today's Dollars)")
-    pretax_savings = st.number_input("Pre-tax Savings ($)", min_value=0, value=275000, step=10000)
-    posttax_savings = st.number_input("Post-tax Savings ($)", min_value=0, value=4800, step=10000)
+    st.subheader(t("current_savings", L))
+    pretax_savings = st.number_input(t("pretax_savings", L), min_value=0, value=275000, step=10000,
+                                     help=h("pretax_savings", L))
+    posttax_savings = st.number_input(t("posttax_savings", L), min_value=0, value=4800, step=10000,
+                                      help=h("posttax_savings", L))
 
-    st.subheader("Income & Savings")
-    salary = st.number_input("Current Annual Salary ($)", min_value=0, value=150000, step=5000)
-    salary_growth_rate = st.slider("Real Salary Growth Rate (%)", 0.0, 5.0, 1.0, 0.01) / 100
-    pretax_savings_rate = st.slider("Pre-tax Savings Rate (%)", 0.0, 30.0, 14.0, 0.1) / 100
-    posttax_savings_rate = st.slider("Post-tax Savings Rate (%)", 0, 30, 5) / 100
-    employer_match_rate = st.slider("Employer Match Rate (%)", 0, 100, 100) / 100
-    employer_match_cap = st.slider("Employer Match Cap (% of Salary)", 0.0, 10.0, 9.2, 0.1) / 100
+    st.subheader(t("income_savings", L))
+    salary = st.number_input(t("current_salary", L), min_value=0, value=150000, step=5000,
+                             help=h("current_salary", L))
+    salary_growth_rate = st.slider(t("salary_growth_rate", L), 0.0, 5.0, 1.0, 0.01,
+                                   help=h("salary_growth_rate", L)) / 100
+    pretax_savings_rate = st.slider(t("pretax_savings_rate", L), 0.0, 30.0, 14.0, 0.1,
+                                    help=h("pretax_savings_rate", L)) / 100
+    posttax_savings_rate = st.slider(t("posttax_savings_rate", L), 0, 30, 5,
+                                     help=h("posttax_savings_rate", L)) / 100
+    employer_match_rate = st.slider(t("employer_match_rate", L), 0, 100, 100,
+                                    help=h("employer_match_rate", L)) / 100
+    employer_match_cap = st.slider(t("employer_match_cap", L), 0.0, 10.0, 9.2, 0.1,
+                                   help=h("employer_match_cap", L)) / 100
 
-    st.subheader("Retirement Spending")
-    annual_spending = st.number_input("Desired Annual Spending in Retirement ($)", min_value=0, value=85000, step=1000)
+    st.subheader(t("retirement_spending", L))
+    annual_spending = st.number_input(t("annual_spending", L), min_value=0, value=85000, step=1000,
+                                      help=h("annual_spending", L))
 
-    st.subheader("Simulation Settings")
-    num_simulations = st.slider("Number of Monte Carlo Simulations", 100, 5000, 1000, step=100)
+    st.subheader(t("simulation_settings", L))
+    num_simulations = st.slider(t("num_simulations", L), 100, 5000, 1000, step=100,
+                                help=h("num_simulations", L))
 
 # Select the appropriate returns based on user choice
 selected_returns = us_returns if market_source == "US (S&P 500)" else br_returns
@@ -331,18 +356,19 @@ if 'params' not in st.session_state:
 from pdf_report import generate_pdf_report
 
 # Run Monte Carlo simulation
-if st.button("Run Simulation"):
-    with st.spinner("Running Monte Carlo simulations..."):
+if st.button(t("run_simulation", L)):
+    with st.spinner(t("running_simulations", L)):
         results = run_monte_carlo(params, selected_returns)
         st.session_state['results'] = results
         st.session_state['params'] = params
+        st.session_state['lang_at_run'] = L  # Store language used for this run
 
 
 if st.session_state['results'] is not None:
     results = st.session_state['results']
     params = st.session_state['params']
-    
-    st.header("Simulation Summary")
+
+    st.header(t("simulation_summary", L))
 
     figs = []
 
@@ -351,22 +377,22 @@ if st.session_state['results'] is not None:
     mortality_table = MORTALITY_US if market_source == "US (S&P 500)" else MORTALITY_BR
 
     # Calculate mortality-adjusted success rate using actuarial approach:
-    # Sum over all ages: P(Death at age t | Alive at retirement) × P(Portfolio Success at t)
+    # Sum over all ages: P(Death at age a | Alive at retirement) × P(Portfolio Success at a)
     # Plus: P(Survive to end_age | Alive at retirement) × P(Portfolio Success at end_age)
     mortality_adjusted_success = 0.0
-    for t in range(params.retirement_age, params.end_age):
-        # P(Alive at beginning of year t | Alive at retirement)
-        # This is the probability of surviving from retirement to age t
-        survival_to_t = calculate_survival_probability(params.retirement_age, t, mortality_table)
+    for age_t in range(params.retirement_age, params.end_age):
+        # P(Alive at beginning of year age_t | Alive at retirement)
+        # This is the probability of surviving from retirement to age age_t
+        survival_to_t = calculate_survival_probability(params.retirement_age, age_t, mortality_table)
 
-        # q_t = probability of dying during year t (between age t and t+1)
-        q_t = mortality_table.get(t, 1.0)
+        # q_t = probability of dying during year age_t (between age age_t and age_t+1)
+        q_t = mortality_table.get(age_t, 1.0)
 
-        # P(Death during year t | Alive at retirement) = P(Survived to t) × q_t
+        # P(Death during year age_t | Alive at retirement) = P(Survived to age_t) × q_t
         prob_death_at_t = survival_to_t * q_t
 
-        # P(Portfolio Success at t)
-        portfolio_success_t = results['survival_probability'].get(t, 0) / 100
+        # P(Portfolio Success at age_t)
+        portfolio_success_t = results['survival_probability'].get(age_t, 0) / 100
 
         # Accumulate: weighted portfolio success by probability of dying at that age
         mortality_adjusted_success += prob_death_at_t * portfolio_success_t
@@ -382,7 +408,7 @@ if st.session_state['results'] is not None:
         gauge_fig = go.Figure(go.Indicator(
             mode = "gauge+number",
             value = mortality_adjusted_success,
-            title = {'text': "Money Lasts Lifetime"},
+            title = {'text': t("money_lasts_lifetime", L)},
             number = {'suffix': '%'},
             gauge = {'axis': {'range': [None, 100]},
                      'steps' : [
@@ -391,15 +417,15 @@ if st.session_state['results'] is not None:
                          {'range': [85, 100], 'color': "#1a9850"}],
                      'bar': {'color': "darkblue"}}))
         gauge_fig.update_layout(height=250)
-        st.plotly_chart(gauge_fig, use_container_width=True)
+        st.plotly_chart(gauge_fig, use_container_width=True, help=h("money_lasts_lifetime", L))
         figs.append(gauge_fig)
-        st.caption("P(money lasts your lifetime)")
+        st.caption(t("caption_money_lasts", L))
 
     with col2:
         portfolio_gauge_fig = go.Figure(go.Indicator(
             mode = "gauge+number",
             value = results['success_rate'],
-            title = {'text': f"Solvent at {params.end_age}"},
+            title = {'text': t("solvent_at_age", L, age=params.end_age)},
             gauge = {'axis': {'range': [None, 100]},
                      'steps' : [
                          {'range': [0, 50], 'color': "#d73027"},
@@ -407,22 +433,26 @@ if st.session_state['results'] is not None:
                          {'range': [85, 100], 'color': "#1a9850"}],
                      'bar': {'color': "darkblue"}}))
         portfolio_gauge_fig.update_layout(height=250)
-        st.plotly_chart(portfolio_gauge_fig, use_container_width=True)
+        st.plotly_chart(portfolio_gauge_fig, use_container_width=True, help=h("solvent_at_age", L))
         figs.append(portfolio_gauge_fig)
-        st.caption(f"P(portfolio survives to {params.end_age})")
+        st.caption(t("caption_portfolio_survives", L, age=params.end_age))
 
     with col3:
-        st.metric("5th Percentile", f"${results['percentile_5_final']:,.0f}")
+        st.metric(t("percentile_5th", L), f"${results['percentile_5_final']:,.0f}",
+                  help=h("percentile_5th", L))
     with col4:
-        st.metric("25th Percentile", f"${np.percentile(results['final_balances'], 25):,.0f}")
+        st.metric(t("percentile_25th", L), f"${np.percentile(results['final_balances'], 25):,.0f}",
+                  help=h("percentile_25th", L))
     with col5:
-        st.metric("Median Balance", f"${results['median_final_balance']:,.0f}")
+        st.metric(t("median_balance", L), f"${results['median_final_balance']:,.0f}",
+                  help=h("median_balance", L))
     with col6:
-        st.metric("75th Percentile", f"${np.percentile(results['final_balances'], 75):,.0f}")
-    
+        st.metric(t("percentile_75th", L), f"${np.percentile(results['final_balances'], 75):,.0f}",
+                  help=h("percentile_75th", L))
+
     if results['probability_of_ruin'] > 0:
-        st.warning(f"Probability of Ruin: {results['probability_of_ruin']:.1f}%. "
-                   f"When ruin occurred, the average shortfall was {results['average_shortfall_years']:.1f} years.")
+        st.warning(t("ruin_warning", L, prob=results['probability_of_ruin'],
+                     years=results['average_shortfall_years']))
 
     st.write("---")
     
@@ -432,40 +462,40 @@ if st.session_state['results'] is not None:
     }
 
     # --- 2. New Proactive Visuals ---
-    st.header("Analytical Insights")
+    st.header(t("analytical_insights", L))
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Distribution of Final Balances")
+        st.subheader(t("distribution_final_balances", L), help=h("distribution_final_balances", L))
         hist_fig = go.Figure(data=[go.Histogram(x=results['final_balances'], nbinsx=50)])
         hist_fig.update_layout(
-            title="Histogram of All Possible Final Balances",
-            xaxis_title="Final Portfolio Value ($)",
-            yaxis_title="Number of Simulations",
+            title=t("histogram_title", L),
+            xaxis_title=t("final_portfolio_value", L),
+            yaxis_title=t("num_simulations_label", L),
         )
         st.plotly_chart(hist_fig, use_container_width=True, config=plotly_config)
         figs.append(hist_fig)
 
     with col2:
-        st.subheader("Portfolio Composition at Retirement")
-        comp_labels = ['Initial Savings', 'Total Contributions', 'Market Growth']
+        st.subheader(t("portfolio_composition", L), help=h("portfolio_composition", L))
+        comp_labels = [t("initial_savings", L), t("total_contributions", L), t("market_growth", L)]
         comp_values = [
             params.pretax_savings + params.posttax_savings,
             results['contribution_at_retirement'] - (params.pretax_savings + params.posttax_savings),
             results['growth_at_retirement']
         ]
         donut_fig = go.Figure(data=[go.Pie(labels=comp_labels, values=comp_values, hole=.4)])
-        donut_fig.update_layout(title="What Built Your Retirement Nest Egg?")
+        donut_fig.update_layout(title=t("what_built_nest_egg", L))
         st.plotly_chart(donut_fig, use_container_width=True, config=plotly_config)
         figs.append(donut_fig)
 
     st.write("---")
 
     # --- 3. Existing Visuals (Improved) ---
-    st.header("Portfolio Trajectory & Details")
-    
+    st.header(t("portfolio_trajectory", L))
+
     # Balance Trajectories Chart
-    st.subheader("Balance Trajectories (Median and Percentiles)")
+    st.subheader(t("balance_trajectories", L), help=h("balance_trajectories", L))
     ages = list(results['balance_percentiles'].keys())
     percentiles_df = pd.DataFrame({
         f'{p}th': [results['balance_percentiles'][age][p] for age in ages]
@@ -474,31 +504,31 @@ if st.session_state['results'] is not None:
     percentiles_df.index.name = 'Age'
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['50th'], mode='lines', name='Median (50th)', line=dict(color='blue', width=3)))
+    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['50th'], mode='lines', name=t("median_50th", L), line=dict(color='blue', width=3)))
     fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['95th'], mode='lines', name='95th', line=dict(color='green', dash='dot')))
     fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['75th'], mode='lines', name='75th', line=dict(color='lightgreen', dash='dot')))
     fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['25th'], mode='lines', name='25th', line=dict(color='orange', dash='dot')))
     fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['5th'], mode='lines', name='5th', line=dict(color='red', dash='dot')))
-    fig.update_layout(title="Portfolio Balance Over Time (Inflation-Adjusted)", xaxis_title="Age", yaxis_title="Portfolio Balance ($)", hovermode="x unified")
+    fig.update_layout(title=t("portfolio_balance_title", L), xaxis_title=t("age", L), yaxis_title=t("portfolio_balance", L), hovermode="x unified")
     st.plotly_chart(fig, use_container_width=True, config=plotly_config)
     figs.append(fig)
 
     # Survival Probability Chart (starting from retirement age)
-    st.subheader("Survival Probability")
+    st.subheader(t("survival_probability", L), help=h("survival_probability", L))
     survival_prob_df = pd.DataFrame.from_dict(results['survival_probability'], orient='index', columns=['Survival Probability (%)'])
     survival_prob_df.index.name = 'Age'
     # Filter to only show ages from retirement onwards (before retirement, survival is always 100%)
     survival_prob_df = survival_prob_df.loc[survival_prob_df.index >= params.retirement_age]
     fig_survival = go.Figure(go.Scatter(x=survival_prob_df.index, y=survival_prob_df['Survival Probability (%)'], mode='lines', name='Survival %', fill='tozeroy'))
-    fig_survival.update_layout(title="Portfolio Survival Probability Over Time", xaxis_title="Age", yaxis_title="Probability of Not Running Out of Money (%)")
+    fig_survival.update_layout(title=t("portfolio_survival_title", L), xaxis_title=t("age", L), yaxis_title=t("prob_not_running_out", L))
     fig_survival.update_yaxes(range=[0, 100])
     st.plotly_chart(fig_survival, use_container_width=True, config=plotly_config)
     figs.append(fig_survival)
 
     # --- Mortality-Adjusted Analysis ---
     st.write("---")
-    st.subheader("Mortality-Adjusted Analysis")
-    st.write("Combines portfolio survival with actuarial mortality data to answer: what's the probability your money lasts as long as you do?")
+    st.subheader(t("mortality_adjusted_analysis", L))
+    st.write(t("mortality_description", L))
 
     # Select mortality table based on market/region (already selected above for metrics)
     mortality_source = "US Social Security Administration 2021" if market_source == "US (S&P 500)" else "Brazil IBGE 2021"
@@ -558,7 +588,7 @@ if st.session_state['results'] is not None:
 
     with col1:
         # Biological survival curve only
-        st.markdown("**Mortality Curve**")
+        st.markdown(f"**{t('mortality_curve', L)}**", help=h("mortality_curve", L))
         fig_combined = go.Figure()
 
         # Mortality survival (from retirement age) - green with fill
@@ -566,17 +596,17 @@ if st.session_state['results'] is not None:
             x=mortality_ages,
             y=mortality_probs,
             mode='lines',
-            name='Probability of Being Alive',
+            name=t("prob_being_alive", L),
             fill='tozeroy',
             line=dict(color='green', width=2),
             fillcolor='rgba(0, 128, 0, 0.2)'
         ))
 
         # Calculate expected survival age from retirement
-        # E[Age] = retirement_age + Σ P(Survive to age t | Alive at retirement)
+        # E[Age] = retirement_age + Σ P(Survive to age a | Alive at retirement)
         expected_age = params.retirement_age
-        for t in range(params.retirement_age, params.end_age):
-            survival_prob = calculate_survival_probability(params.retirement_age, t + 1, mortality_table)
+        for age_iter in range(params.retirement_age, params.end_age):
+            survival_prob = calculate_survival_probability(params.retirement_age, age_iter + 1, mortality_table)
             expected_age += survival_prob
 
         # Add annotation for expected survival age
@@ -590,9 +620,9 @@ if st.session_state['results'] is not None:
         )
 
         fig_combined.update_layout(
-            title=f"P(Alive at Age t | Alive at {params.retirement_age})",
-            xaxis_title="Age",
-            yaxis_title="Probability (%)",
+            title=t("alive_at_age_title", L, age=params.retirement_age),
+            xaxis_title=t("age", L),
+            yaxis_title=t("probability_percent", L),
             hovermode="x unified",
             legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99)
         )
@@ -602,7 +632,7 @@ if st.session_state['results'] is not None:
 
     with col2:
         # Risk Curve: P(Go Broke Before Death | Alive at t)
-        st.markdown("**Lifetime Ruin Risk**")
+        st.markdown(f"**{t('lifetime_ruin_risk', L)}**", help=h("lifetime_ruin_risk", L))
         fig_risk = go.Figure()
 
         # Get risk at retirement age for annotation
@@ -612,11 +642,11 @@ if st.session_state['results'] is not None:
             x=combined_ages,
             y=risk_curve,
             mode='lines',
-            name='Remaining Ruin Risk',
+            name=t("remaining_ruin_risk", L),
             fill='tozeroy',
             line=dict(color='crimson', width=2),
             fillcolor='rgba(220, 20, 60, 0.3)',
-            hovertemplate="Age %{x}<br>If alive at this age, %{y:.1f}% chance of going broke before death<extra></extra>"
+            hovertemplate="Age %{x}<br>%{y:.1f}%<extra></extra>"
         ))
 
         # Add annotation for risk at retirement age
@@ -624,7 +654,7 @@ if st.session_state['results'] is not None:
             fig_risk.add_annotation(
                 x=params.retirement_age,
                 y=retirement_risk,
-                text=f"At retirement: {retirement_risk:.1f}%",
+                text=t("at_retirement", L, value=retirement_risk),
                 showarrow=True,
                 arrowhead=2,
                 arrowcolor='crimson',
@@ -635,9 +665,9 @@ if st.session_state['results'] is not None:
             )
 
         fig_risk.update_layout(
-            title="P(Run Out of Money Before Death | Alive at Age t)",
-            xaxis_title="Age",
-            yaxis_title="Probability (%)",
+            title=t("ruin_risk_title", L),
+            xaxis_title=t("age", L),
+            yaxis_title=t("probability_percent", L),
             hovermode="x unified"
         )
         fig_risk.update_yaxes(range=[0, max(risk_curve) * 1.2 if risk_curve and max(risk_curve) > 0 else 100])
@@ -652,40 +682,38 @@ if st.session_state['results'] is not None:
     # Get risk at retirement for insights
     retirement_risk_info = ""
     if risk_curve and risk_curve[0] > 0:
-        retirement_risk_info = f"\n    - **Ruin risk at retirement: {risk_curve[0]:.1f}%** - chance of going broke before death"
+        retirement_risk_info = t("ruin_risk_at_retirement", L, value=risk_curve[0])
 
-    st.info(f"""
-    **At Age {params.end_age} (given you reach retirement):**
-    - P(portfolio survives): **{portfolio_end_prob:.1f}%**
-    - P(you're alive): **{life_expectancy_prob:.1f}%**
-    - P(both): **{adjusted_end_prob:.1f}%**{retirement_risk_info}
-
-    **Charts:** The green curve shows P(alive at age t | alive at retirement). The red curve shows P(go broke before death | alive at age t) — this increases over time because surviving longer means you've been consuming savings without dying early.
-    """)
+    st.info(t("mortality_insights", L,
+              end_age=params.end_age,
+              portfolio_prob=portfolio_end_prob,
+              life_prob=life_expectancy_prob,
+              adjusted_prob=adjusted_end_prob,
+              risk_info=retirement_risk_info))
 
     # --- 4. Cash Flow Table ---
-    st.subheader("Median Case: Year-by-Year Cash Flow")
+    st.subheader(t("cash_flow_table", L))
     median_sim_records = results['median_simulation'].yearly_records
     cash_flow_data = []
     for record in median_sim_records:
         cash_flow_data.append({
-            'Age': record.age, 'Salary': record.salary, 'Contribution': record.contribution,
-            'Employer Match': record.employer_match, 'Withdrawal': record.withdrawal, 'Tax Paid': record.tax_paid,
-            'Real Return': record.market_return, 'Pre-tax Balance': record.pretax_balance,
-            'Post-tax Balance': record.posttax_balance, 'Total Balance': record.total_balance,
+            t("age", L): record.age, t("salary", L): record.salary, t("contribution", L): record.contribution,
+            t("employer_match", L): record.employer_match, t("withdrawal", L): record.withdrawal, t("tax_paid", L): record.tax_paid,
+            t("real_return", L): record.market_return, t("pretax_balance", L): record.pretax_balance,
+            t("posttax_balance", L): record.posttax_balance, t("total_balance", L): record.total_balance,
         })
-    cash_flow_df = pd.DataFrame(cash_flow_data).set_index('Age')
+    cash_flow_df = pd.DataFrame(cash_flow_data).set_index(t("age", L))
     cash_flow_df = cash_flow_df.loc[current_age:]
     st.dataframe(cash_flow_df.style.format({
-        'Salary': "${:,.0f}", 'Contribution': "${:,.0f}", 'Employer Match': "${:,.0f}",
-        'Withdrawal': "${:,.0f}", 'Tax Paid': "${:,.0f}", 'Pre-tax Balance': "${:,.0f}",
-        'Post-tax Balance': "${:,.0f}", 'Total Balance': "${:,.0f}", 'Real Return': "{:.2%}"
+        t("salary", L): "${:,.0f}", t("contribution", L): "${:,.0f}", t("employer_match", L): "${:,.0f}",
+        t("withdrawal", L): "${:,.0f}", t("tax_paid", L): "${:,.0f}", t("pretax_balance", L): "${:,.0f}",
+        t("posttax_balance", L): "${:,.0f}", t("total_balance", L): "${:,.0f}", t("real_return", L): "{:.2%}"
     }))
 
     # --- 5. Sensitivity Analysis Heatmap ---
     st.write("---")
-    st.header("Sensitivity Analysis")
-    st.write("How retirement age and spending affect your success probability.")
+    st.header(t("sensitivity_analysis", L), help=h("sensitivity_analysis", L))
+    st.write(t("sensitivity_description", L))
 
     # Define grid ranges (7x7 grid for faster computation)
     # Retirement age deltas: -3, -2, -1, 0, +1, +2, +3 years
@@ -700,7 +728,7 @@ if st.session_state['results'] is not None:
     spending_levels = [params.annual_spending + d for d in spending_deltas if params.annual_spending + d > 0]
     spending_delta_labels = [f"{d//1000:+d}k" if d != 0 else "0" for d in spending_deltas if params.annual_spending + d > 0]
 
-    with st.spinner("Running sensitivity grid analysis..."):
+    with st.spinner(t("running_sensitivity", L)):
         sensitivity_grid, mortality_adjusted_grid = run_sensitivity_grid(
             params, selected_returns, retirement_ages, spending_levels, mortality_table, num_simulations=200
         )
@@ -728,13 +756,13 @@ if st.session_state['results'] is not None:
             hovertemplate="Retirement Age: %{customdata}<br>Spending: $%{meta:,}<br>Success Rate: %{z:.1f}%<extra></extra>",
             customdata=[[retirement_ages[j] for j in range(len(retirement_ages))] for _ in spending_levels],
             meta=[[spending_levels[i] for _ in retirement_ages] for i in range(len(spending_levels))],
-            colorbar=dict(title="Success Rate (%)", ticksuffix="%")
+            colorbar=dict(title=t("success_rate", L), ticksuffix="%")
         ))
 
         fig_heatmap.update_layout(
-            title=f"P(Portfolio Survives to {params.end_age})",
-            xaxis_title="Retirement Age (years)",
-            yaxis_title="Spending ($ change)",
+            title=t("portfolio_survives_title", L, age=params.end_age),
+            xaxis_title=t("retirement_age_years", L),
+            yaxis_title=t("spending_change", L),
             height=500
         )
 
@@ -761,13 +789,13 @@ if st.session_state['results'] is not None:
             hovertemplate="Retirement Age: %{customdata}<br>Spending: $%{meta:,}<br>Mortality-Adjusted: %{z:.1f}%<extra></extra>",
             customdata=[[retirement_ages[j] for j in range(len(retirement_ages))] for _ in spending_levels],
             meta=[[spending_levels[i] for _ in retirement_ages] for i in range(len(spending_levels))],
-            colorbar=dict(title="Success (%)", ticksuffix="%")
+            colorbar=dict(title=t("success_rate", L), ticksuffix="%")
         ))
 
         fig_heatmap_mortality.update_layout(
-            title="P(Money Lasts Your Lifetime)",
-            xaxis_title="Retirement Age (years)",
-            yaxis_title="Spending ($ change)",
+            title=t("money_lasts_lifetime_title", L),
+            xaxis_title=t("retirement_age_years", L),
+            yaxis_title=t("spending_change", L),
             height=500
         )
 
@@ -778,21 +806,21 @@ if st.session_state['results'] is not None:
     max_success = np.nanmax(sensitivity_grid)
     max_mortality_adjusted = np.nanmax(mortality_adjusted_grid)
     if max_success < 50:
-        st.error("Warning: All scenarios show less than 50% success rate. Consider significantly reducing spending or increasing savings.")
+        st.error(t("sensitivity_warning_low", L))
     elif max_success < 80:
-        st.warning("Some scenarios may need adjustment. Look for greener areas on the heatmap for better outcomes.")
+        st.warning(t("sensitivity_warning_medium", L))
 
     st.session_state['figs'] = figs
 
     # --- 6. Simulation Details ---
-    st.subheader("Simulation Details")
-    st.write(f"Years covered by selected market data: {selected_returns.index.min()} to {selected_returns.index.max()}")
-    st.write(f"Mean real return: {selected_returns.mean():.2%}")
-    st.write(f"Std dev of real return: {selected_returns.std():.2%}")
+    st.subheader(t("simulation_details", L))
+    st.write(t("years_covered", L, min=selected_returns.index.min(), max=selected_returns.index.max()))
+    st.write(t("mean_real_return", L, value=selected_returns.mean()))
+    st.write(t("std_real_return", L, value=selected_returns.std()))
 
     # --- 7. Historical Market Context ---
     st.write("---")
-    with st.expander("Historical Market Context", expanded=False):
+    with st.expander(t("historical_context", L), expanded=False):
         # Select appropriate data and events based on market
         if market_source == "US (S&P 500)":
             market_df = us_market_df
@@ -804,28 +832,28 @@ if st.session_state['results'] is not None:
             market_name = "CDI (Brazil)"
 
         # Create and display the historical events chart
-        fig_historical = create_historical_events_chart(market_df, events_dict, market_name)
+        fig_historical = create_historical_events_chart(market_df, events_dict, market_name, L)
         st.plotly_chart(fig_historical, use_container_width=True, config=plotly_config)
         figs.append(fig_historical)
 
         # Events summary table
-        st.subheader("Key Historical Events")
+        st.subheader(t("key_historical_events", L))
         events_data = []
         for year, event in events_dict.items():
             if year in market_df.index:
                 events_data.append({
-                    "Year": year,
-                    "Event": event['name'],
-                    "Real Return": f"{market_df.loc[year, 'Real_Return']:.1%}",
-                    "Description": event['description']
+                    t("year", L): year,
+                    t("event", L): event['name'],
+                    t("real_return", L): f"{market_df.loc[year, 'Real_Return']:.1%}",
+                    t("description", L): event['description']
                 })
         events_table = pd.DataFrame(events_data)
         st.dataframe(events_table, hide_index=True, use_container_width=True)
 
         # --- Stress Test: Portfolio Performance During Historical Events ---
         st.write("---")
-        st.subheader("Stress Test: Your Portfolio During Historical Crises")
-        st.write("Simulates your portfolio using actual historical returns from each crisis — what if you retired right before a crash?")
+        st.subheader(t("stress_test_title", L), help=h("stress_test", L))
+        st.write(t("stress_test_description", L))
 
         # Get projected balance at retirement from median simulation
         retirement_idx = params.retirement_age - params.current_age - 1
@@ -851,26 +879,26 @@ if st.session_state['results'] is not None:
 
         # Create and display stress test chart
         if stress_results:
-            fig_stress = create_stress_test_chart(stress_results, events_dict, years_in_retirement)
+            fig_stress = create_stress_test_chart(stress_results, events_dict, years_in_retirement, L)
             st.plotly_chart(fig_stress, use_container_width=True, config=plotly_config)
             figs.append(fig_stress)
 
             # Stress test results table
-            st.subheader("Stress Test Results")
+            st.subheader(t("stress_test_results", L))
             stress_table_data = []
             for year, data in stress_results.items():
                 event = events_dict[year]
                 if data['survived']:
-                    outcome = f"Survived (${data['final_balance']:,.0f} remaining)"
+                    outcome = t("survived", L, balance=data['final_balance'])
                 else:
-                    outcome = f"Depleted after {data['ruin_year']} years"
+                    outcome = t("depleted", L, years=data['ruin_year'])
 
                 stress_table_data.append({
-                    "Year": year,
-                    "Event": event['name'],
-                    "Starting Balance": f"${projected_retirement_balance:,.0f}",
-                    "Annual Spending": f"${params.annual_spending:,.0f}",
-                    "Outcome": outcome
+                    t("year", L): year,
+                    t("event", L): event['name'],
+                    t("starting_balance", L): f"${projected_retirement_balance:,.0f}",
+                    t("annual_spending", L): f"${params.annual_spending:,.0f}",
+                    t("outcome", L): outcome
                 })
 
             stress_table = pd.DataFrame(stress_table_data)
@@ -880,21 +908,21 @@ if st.session_state['results'] is not None:
             survivors = sum(1 for d in stress_results.values() if d['survived'])
             total = len(stress_results)
             if survivors == total:
-                st.success(f"Your portfolio would have survived all {total} historical stress scenarios.")
+                st.success(t("stress_all_survived", L, total=total))
             elif survivors == 0:
-                st.error(f"Your portfolio would have been depleted in all {total} historical stress scenarios. Consider reducing spending or increasing savings.")
+                st.error(t("stress_all_failed", L, total=total))
             else:
-                st.warning(f"Your portfolio survived {survivors} of {total} historical stress scenarios.")
+                st.warning(t("stress_partial", L, survivors=survivors, total=total))
 
     # --- 8. Download PDF ---
     st.write("---")
-    st.header("Download Report")
+    st.header(t("download_report", L))
 
-    if st.button("Generate PDF Report"):
-        with st.spinner("Generating PDF..."):
+    if st.button(t("generate_pdf", L)):
+        with st.spinner(t("generating_pdf", L)):
             pdf_data = generate_pdf_report(st, st.session_state['params'], st.session_state['results'], st.session_state['figs'])
             st.download_button(
-                label="Download PDF",
+                label=t("download_pdf", L),
                 data=pdf_data,
                 file_name="retirement_simulation_report.pdf",
                 mime="application/pdf"
