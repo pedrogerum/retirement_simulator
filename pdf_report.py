@@ -1,6 +1,7 @@
 import pandas as pd
 from fpdf import FPDF
 import time
+import os
 
 class PDF(FPDF):
     def header(self):
@@ -113,27 +114,52 @@ def generate_pdf_report(st, params, results, figs):
     # Add charts
     pdf.set_font('Arial', 'B', 12)
     pdf.cell(0, 10, 'Charts', 0, 1, 'L')
-    
+
     chart_paths = []
+    charts_generated = False
+
     for i, fig in enumerate(figs):
         chart_title = fig.layout.title.text if fig.layout.title.text else f"Chart {i+1}"
         st.text(f"Generating chart: {chart_title}...")
         path = f"chart_{i}.png"
-        
-        start_time = time.time()
-        fig.write_image(path)
-        end_time = time.time()
-        
-        time_taken = end_time - start_time
-        print(f"Time taken for '{chart_title}': {time_taken:.2f} seconds")
-        st.text(f"'{chart_title}' generated in {time_taken:.2f} seconds.")
-        
-        chart_paths.append(path)
 
-    st.text("All charts generated. Creating PDF...")
+        try:
+            start_time = time.time()
+            fig.write_image(path)
+            end_time = time.time()
 
-    for path in chart_paths:
-        pdf.image(path, w=180)
-        pdf.ln(2)
+            time_taken = end_time - start_time
+            print(f"Time taken for '{chart_title}': {time_taken:.2f} seconds")
+            st.text(f"'{chart_title}' generated in {time_taken:.2f} seconds.")
+
+            chart_paths.append(path)
+            charts_generated = True
+        except Exception as e:
+            st.text(f"Could not generate chart '{chart_title}': Image export not available")
+            print(f"Chart generation error for '{chart_title}': {e}")
+            # Only show the warning once
+            if i == 0:
+                pdf.set_font('Arial', 'I', 10)
+                pdf.multi_cell(0, 5,
+                    "Note: Charts could not be included in this PDF. "
+                    "Image export requires additional dependencies (kaleido) that are not available in this environment. "
+                    "Please view the charts in the interactive Streamlit app."
+                )
+                pdf.ln(5)
+            break
+
+    if charts_generated:
+        st.text("Charts generated. Creating PDF...")
+        for path in chart_paths:
+            if os.path.exists(path):
+                pdf.image(path, w=180)
+                pdf.ln(2)
+                # Clean up temporary file
+                try:
+                    os.remove(path)
+                except:
+                    pass
+    else:
+        st.text("Creating PDF without charts...")
 
     return bytes(pdf.output(dest='S'))

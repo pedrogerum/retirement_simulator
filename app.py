@@ -483,10 +483,12 @@ if st.session_state['results'] is not None:
     st.plotly_chart(fig, use_container_width=True, config=plotly_config)
     figs.append(fig)
 
-    # Survival Probability Chart
+    # Survival Probability Chart (starting from retirement age)
     st.subheader("Survival Probability")
     survival_prob_df = pd.DataFrame.from_dict(results['survival_probability'], orient='index', columns=['Survival Probability (%)'])
     survival_prob_df.index.name = 'Age'
+    # Filter to only show ages from retirement onwards (before retirement, survival is always 100%)
+    survival_prob_df = survival_prob_df.loc[survival_prob_df.index >= params.retirement_age]
     fig_survival = go.Figure(go.Scatter(x=survival_prob_df.index, y=survival_prob_df['Survival Probability (%)'], mode='lines', name='Survival %', fill='tozeroy'))
     fig_survival.update_layout(title="Portfolio Survival Probability Over Time", xaxis_title="Age", yaxis_title="Probability of Not Running Out of Money (%)")
     fig_survival.update_yaxes(range=[0, 100])
@@ -729,17 +731,6 @@ if st.session_state['results'] is not None:
             colorbar=dict(title="Success Rate (%)", ticksuffix="%")
         ))
 
-        # Add marker for current selection (at 0,0)
-        if params.retirement_age in retirement_ages and params.annual_spending in spending_levels:
-            fig_heatmap.add_trace(go.Scatter(
-                x=["0"],
-                y=["0"],
-                mode='markers',
-                marker=dict(size=20, color='white', symbol='circle-open', line=dict(width=3, color='black')),
-                name='Current Selection',
-                showlegend=True
-            ))
-
         fig_heatmap.update_layout(
             title=f"P(Portfolio Survives to {params.end_age})",
             xaxis_title="Retirement Age (years)",
@@ -772,16 +763,6 @@ if st.session_state['results'] is not None:
             meta=[[spending_levels[i] for _ in retirement_ages] for i in range(len(spending_levels))],
             colorbar=dict(title="Success (%)", ticksuffix="%")
         ))
-
-        if params.retirement_age in retirement_ages and params.annual_spending in spending_levels:
-            fig_heatmap_mortality.add_trace(go.Scatter(
-                x=["0"],
-                y=["0"],
-                mode='markers',
-                marker=dict(size=20, color='white', symbol='circle-open', line=dict(width=3, color='black')),
-                name='Current Selection',
-                showlegend=True
-            ))
 
         fig_heatmap_mortality.update_layout(
             title="P(Money Lasts Your Lifetime)",
