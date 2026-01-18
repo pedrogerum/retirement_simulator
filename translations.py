@@ -173,6 +173,36 @@ TRANSLATIONS = {
         "EN": "Number of Simulations",
         "PT": "Numero de Simulacoes"
     },
+    "percent_of_scenarios": {
+        "EN": "% of Scenarios",
+        "PT": "% dos Cenarios"
+    },
+    "info_histogram_explanation": {
+        "EN": """
+**Understanding This Chart:**
+
+This histogram shows all {num_simulations} simulated retirement outcomes. Each bar shows how often a particular final balance occurred.
+
+**Your Personalized Results:**
+- **Median (50th percentile):** ${median:,.0f} — half of scenarios end above this, half below
+- **Worst 5% of scenarios:** You'd have less than ${p5:,.0f}
+- **Best 5% of scenarios:** You'd have more than ${p95:,.0f}
+
+**How to Read:** Taller bars = more common outcomes. Bars clustered on the right (high values) = robust plan. Bars near zero or spread wide = higher risk.
+""",
+        "PT": """
+**Entendendo Este Grafico:**
+
+Este histograma mostra todos os {num_simulations} resultados simulados de aposentadoria. Cada barra mostra com que frequencia um determinado saldo final ocorreu.
+
+**Seus Resultados Personalizados:**
+- **Mediana (percentil 50):** R${median:,.0f} — metade dos cenarios termina acima disso, metade abaixo
+- **Piores 5% dos cenarios:** Voce teria menos de R${p5:,.0f}
+- **Melhores 5% dos cenarios:** Voce teria mais de R${p95:,.0f}
+
+**Como Ler:** Barras mais altas = resultados mais comuns. Barras agrupadas a direita (valores altos) = plano robusto. Barras perto de zero ou muito espalhadas = maior risco.
+"""
+    },
     "portfolio_composition": {
         "EN": "Portfolio Composition at Retirement",
         "PT": "Composicao do Patrimonio na Aposentadoria"

@@ -474,14 +474,52 @@ if st.session_state['results'] is not None:
 
     with col1:
         st.subheader(t("distribution_final_balances", L), help=h("distribution_final_balances", L))
-        hist_fig = go.Figure(data=[go.Histogram(x=results['final_balances'], nbinsx=50)])
+
+        # Calculate percentiles for annotations
+        p5 = np.percentile(results['final_balances'], 5)
+        p25 = np.percentile(results['final_balances'], 25)
+        p50 = np.percentile(results['final_balances'], 50)
+        p75 = np.percentile(results['final_balances'], 75)
+        p95 = np.percentile(results['final_balances'], 95)
+
+        # Create histogram with percentage Y-axis
+        hist_fig = go.Figure(data=[go.Histogram(
+            x=results['final_balances'],
+            nbinsx=50,
+            histnorm='percent',
+            marker_color='steelblue'
+        )])
+
+        # Add vertical lines for key percentiles
+        percentile_lines = [
+            (p5, t("percentile_5th_legend", L), "red"),
+            (p50, t("median_50th", L), "blue"),
+            (p95, t("percentile_95th_legend", L), "green"),
+        ]
+
+        for val, label, color in percentile_lines:
+            hist_fig.add_vline(
+                x=val,
+                line_dash="dash",
+                line_color=color,
+                annotation_text=f"{label}: ${val:,.0f}",
+                annotation_position="top"
+            )
+
         hist_fig.update_layout(
             title=t("histogram_title", L),
             xaxis_title=t("final_portfolio_value", L),
-            yaxis_title=t("num_simulations_label", L),
+            yaxis_title=t("percent_of_scenarios", L),
         )
         st.plotly_chart(hist_fig, use_container_width=True, config=plotly_config)
         figs.append(hist_fig)
+
+        # Add explanation info box
+        st.info(t("info_histogram_explanation", L,
+                  num_simulations=params.num_simulations,
+                  median=p50,
+                  p5=p5,
+                  p95=p95))
 
     with col2:
         st.subheader(t("portfolio_composition", L), help=h("portfolio_composition", L))
