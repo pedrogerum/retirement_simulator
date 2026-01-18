@@ -219,6 +219,22 @@ TRANSLATIONS = {
         "EN": "Median (50th)",
         "PT": "Mediana (50)"
     },
+    "percentile_95th_legend": {
+        "EN": "95th Percentile",
+        "PT": "Percentil 95"
+    },
+    "percentile_75th_legend": {
+        "EN": "75th Percentile",
+        "PT": "Percentil 75"
+    },
+    "percentile_25th_legend": {
+        "EN": "25th Percentile",
+        "PT": "Percentil 25"
+    },
+    "percentile_5th_legend": {
+        "EN": "5th Percentile",
+        "PT": "Percentil 5"
+    },
 
     # Survival probability
     "survival_probability": {

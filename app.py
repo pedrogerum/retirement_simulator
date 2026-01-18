@@ -504,12 +504,51 @@ if st.session_state['results'] is not None:
     percentiles_df.index.name = 'Age'
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['50th'], mode='lines', name=t("median_50th", L), line=dict(color='blue', width=3)))
-    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['95th'], mode='lines', name='95th', line=dict(color='green', dash='dot')))
-    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['75th'], mode='lines', name='75th', line=dict(color='lightgreen', dash='dot')))
-    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['25th'], mode='lines', name='25th', line=dict(color='orange', dash='dot')))
-    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['5th'], mode='lines', name='5th', line=dict(color='red', dash='dot')))
-    fig.update_layout(title=t("portfolio_balance_title", L), xaxis_title=t("age", L), yaxis_title=t("portfolio_balance", L), hovermode="x unified")
+
+    # Get final age and final values for annotations
+    final_age = ages[-1]
+    final_values = {
+        '50th': percentiles_df['50th'].iloc[-1],
+        '95th': percentiles_df['95th'].iloc[-1],
+        '75th': percentiles_df['75th'].iloc[-1],
+        '25th': percentiles_df['25th'].iloc[-1],
+        '5th': percentiles_df['5th'].iloc[-1],
+    }
+
+    # Add traces with translated names
+    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['50th'], mode='lines',
+                             name=t("median_50th", L), line=dict(color='blue', width=3)))
+    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['95th'], mode='lines',
+                             name=t("percentile_95th_legend", L), line=dict(color='green', dash='dot')))
+    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['75th'], mode='lines',
+                             name=t("percentile_75th_legend", L), line=dict(color='lightgreen', dash='dot')))
+    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['25th'], mode='lines',
+                             name=t("percentile_25th_legend", L), line=dict(color='orange', dash='dot')))
+    fig.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df['5th'], mode='lines',
+                             name=t("percentile_5th_legend", L), line=dict(color='red', dash='dot')))
+
+    # Add final value markers
+    fig.add_trace(go.Scatter(
+        x=[final_age] * 5,
+        y=[final_values['95th'], final_values['75th'], final_values['50th'], final_values['25th'], final_values['5th']],
+        mode='markers+text',
+        marker=dict(size=8, color=['green', 'lightgreen', 'blue', 'orange', 'red']),
+        text=[f"${final_values['95th']:,.0f}", f"${final_values['75th']:,.0f}",
+              f"${final_values['50th']:,.0f}", f"${final_values['25th']:,.0f}", f"${final_values['5th']:,.0f}"],
+        textposition='middle right',
+        textfont=dict(size=10),
+        showlegend=False,
+        hoverinfo='skip'
+    ))
+
+    fig.update_layout(
+        title=t("portfolio_balance_title", L),
+        xaxis_title=t("age", L),
+        yaxis_title=t("portfolio_balance", L),
+        hovermode="x unified",
+        # Add right margin for final value labels
+        margin=dict(r=100)
+    )
     st.plotly_chart(fig, use_container_width=True, config=plotly_config)
     figs.append(fig)
 
