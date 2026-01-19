@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from retirement_simulator import SimulationParams, run_monte_carlo, load_market_data, YearlyRecord
+from retirement_simulator import SimulationParams, run_monte_carlo, load_market_data, YearlyRecord, run_sensitivity_grid_fast
 from translations import t, h
 import os
 import plotly.graph_objects as go
@@ -433,8 +433,9 @@ if 'results' in st.session_state and st.session_state['results']:
     spending_delta_labels = [f"{d//1000:+d}k" if d != 0 else "0" for d in spending_deltas if params.annual_spending + d > 0]
 
     with st.spinner(t("running_sensitivity", L)):
-        sensitivity_grid, mortality_adjusted_grid = run_sensitivity_grid(
-            params, selected_returns, retirement_ages_sens, spending_levels, selected_mortality_table, num_simulations=200
+        sensitivity_grid, mortality_adjusted_grid = run_sensitivity_grid_fast(
+            params, selected_returns, retirement_ages_sens, spending_levels, selected_mortality_table,
+            num_simulations=200, calculate_mortality_adjusted_fn=calculate_mortality_adjusted_success
         )
 
     heatmap_col1, heatmap_col2 = st.columns(2)

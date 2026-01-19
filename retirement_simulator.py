@@ -292,3 +292,205 @@ def run_monte_carlo(params: SimulationParams, returns: pd.Series, mortality_tabl
         'growth_at_retirement': median_growth_retirement,
 
     }
+
+# =============================================================================
+# VECTORIZED IMPLEMENTATIONS FOR PERFORMANCE
+# =============================================================================
+
+def calculate_tax_us_vectorized(incomes: np.ndarray, brackets: List[Tuple[float, float]], standard_deduction: float) -> np.ndarray:
+    """Vectorized US progressive tax calculation for array of incomes."""
+    taxable = np.maximum(0, incomes - standard_deduction)
+    tax = np.zeros_like(taxable)
+    prev_limit = 0.0
+    for bracket_limit, rate in brackets:
+        if bracket_limit == float('inf'):
+            bracket_limit = 1e12  # Large number for numpy
+        bracket_income = np.clip(taxable - prev_limit, 0, bracket_limit - prev_limit)
+        tax += bracket_income * rate
+        prev_limit = bracket_limit
+    return tax
+
+def get_vectorized_tax_calculator(tax_region: str):
+    """Returns a vectorized tax calculator function and its parameters."""
+    tax_data = get_tax_data(tax_region)
+    if tax_region == 'US':
+        brackets, standard_deduction = tax_data
+        return lambda incomes: calculate_tax_us_vectorized(incomes, brackets, standard_deduction)
+    elif tax_region == 'BR':
+        _, flat_rate = tax_data
+        return lambda incomes: incomes * flat_rate
+    else:
+        raise ValueError(f"Unknown tax region: {tax_region}")
+
+def generate_return_sequences_vectorized(returns: pd.Series, num_years: int, num_sequences: int, rng=None) -> np.ndarray:
+    """Generate multiple return sequences at once using vectorized operations with block resampling."""
+    if rng is None:
+        rng = np.random.default_rng()
+
+    years = returns.index.values
+    return_values = returns.values
+    n_years_data = len(years)
+
+    # Pick random start indices for all sequences
+    start_indices = rng.integers(0, n_years_data, size=num_sequences)
+    sequences = np.empty((num_sequences, num_years), dtype=np.float64)
+
+    for i in range(num_years):
+        current_indices = start_indices + i
+        # Block resampling: when we exceed data, pick new random start
+        wrapped_mask = current_indices >= n_years_data
+        if wrapped_mask.any():
+            new_starts = rng.integers(0, n_years_data, size=wrapped_mask.sum())
+            start_indices[wrapped_mask] = new_starts - i
+            current_indices[wrapped_mask] = new_starts
+        sequences[:, i] = return_values[current_indices % n_years_data]
+
+    return sequences
+
+def run_monte_carlo_fast(params: SimulationParams, returns: pd.Series, num_simulations: int = None, rng=None) -> Dict:
+    """
+    Fast vectorized Monte Carlo simulation optimized for sensitivity analysis.
+    Returns only success_rate and survival_probability (no detailed yearly records).
+    """
+    if rng is None:
+        rng = np.random.default_rng()
+
+    num_sims = num_simulations if num_simulations else params.num_simulations
+    num_years = params.end_age - params.current_age
+    retirement_year_idx = params.retirement_age - params.current_age
+
+    # Generate all return sequences at once
+    return_sequences = generate_return_sequences_vectorized(returns, num_years, num_sims, rng)
+
+    # Initialize arrays for all simulations
+    pretax = np.full(num_sims, params.pretax_savings, dtype=np.float64)
+    posttax = np.full(num_sims, params.posttax_savings, dtype=np.float64)
+    salary = np.full(num_sims, params.salary, dtype=np.float64)
+
+    success = np.ones(num_sims, dtype=bool)
+    ruin_age = np.full(num_sims, params.end_age, dtype=np.int32)
+
+    # Track solvency by age for survival probability
+    solvent_by_age = np.ones((num_sims, num_years), dtype=bool)
+
+    # Get vectorized tax calculator
+    tax_calc = get_vectorized_tax_calculator(params.tax_region)
+
+    for i in range(num_years):
+        age = params.current_age + i
+        market_return = return_sequences[:, i]
+
+        if age < params.retirement_age:
+            # Accumulation phase - fully vectorized
+            pretax_contrib = salary * params.pretax_savings_rate
+            posttax_contrib = salary * params.posttax_savings_rate
+            match_eligible = salary * params.employer_match_cap
+            employer_match = np.minimum(pretax_contrib, match_eligible) * params.employer_match_rate
+
+            pretax += pretax_contrib + employer_match
+            posttax += posttax_contrib
+            pretax *= (1 + market_return)
+            posttax *= (1 + market_return)
+            salary *= (1 + params.salary_growth_rate)
+        else:
+            # Withdrawal phase - vectorized with iterative tax convergence
+            spending_need = params.annual_spending
+            remaining_need = np.full(num_sims, spending_need, dtype=np.float64)
+
+            # Withdraw from post-tax first
+            posttax_withdrawal = np.minimum(posttax, remaining_need)
+            posttax -= posttax_withdrawal
+            remaining_need -= posttax_withdrawal
+
+            # Withdraw from pre-tax with tax gross-up (vectorized convergence)
+            need_pretax_mask = (remaining_need > 0) & (pretax > 0)
+            if need_pretax_mask.any():
+                pretax_withdrawal = np.zeros(num_sims, dtype=np.float64)
+                pretax_withdrawal[need_pretax_mask] = remaining_need[need_pretax_mask]
+
+                # Iterative tax convergence (vectorized)
+                prev_withdrawal = np.zeros(num_sims, dtype=np.float64)
+                for _ in range(10):
+                    tax = tax_calc(pretax_withdrawal)
+                    needed_gross = remaining_need + tax
+                    pretax_withdrawal = np.where(need_pretax_mask,
+                                                  np.minimum(pretax, needed_gross),
+                                                  pretax_withdrawal)
+                    converged = np.abs(pretax_withdrawal - prev_withdrawal) < 0.01
+                    if converged.all():
+                        break
+                    prev_withdrawal = pretax_withdrawal.copy()
+
+                pretax -= pretax_withdrawal
+
+            pretax *= (1 + market_return)
+            posttax *= (1 + market_return)
+
+            # Check for ruin
+            total = pretax + posttax
+            newly_ruined = (total <= 0) & success & (remaining_need > posttax_withdrawal)
+            if newly_ruined.any():
+                success[newly_ruined] = False
+                ruin_age[newly_ruined] = age
+
+            solvent_by_age[:, i] = (total > 0) | (age < params.retirement_age)
+
+        pretax = np.maximum(pretax, 0)
+        posttax = np.maximum(posttax, 0)
+
+        # Track solvency for accumulation phase
+        if age < params.retirement_age:
+            solvent_by_age[:, i] = True
+
+    # Calculate results
+    success_rate = success.mean() * 100
+    survival_prob = {params.current_age + i: solvent_by_age[:, i].mean() * 100 for i in range(num_years)}
+
+    return {
+        'success_rate': success_rate,
+        'survival_probability': survival_prob,
+    }
+
+def run_sensitivity_grid_fast(params: SimulationParams, returns: pd.Series,
+                               retirement_ages: List[int], spending_levels: List[float],
+                               mortality_table: dict, num_simulations: int = 200,
+                               calculate_mortality_adjusted_fn=None) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Optimized sensitivity grid computation using vectorized Monte Carlo.
+
+    This is significantly faster than running separate simulations for each grid point
+    because it uses vectorized numpy operations instead of Python loops.
+    """
+    rng = np.random.default_rng(42)  # Fixed seed for reproducibility across grid
+
+    results_grid = np.zeros((len(spending_levels), len(retirement_ages)))
+    mortality_adjusted_grid = np.zeros((len(spending_levels), len(retirement_ages)))
+
+    for i, spending in enumerate(spending_levels):
+        for j, ret_age in enumerate(retirement_ages):
+            if spending <= 0 or ret_age <= params.current_age or ret_age >= params.end_age:
+                results_grid[i, j] = np.nan
+                mortality_adjusted_grid[i, j] = np.nan
+                continue
+
+            # Create modified params
+            modified_params = SimulationParams(
+                current_age=params.current_age, retirement_age=ret_age, end_age=params.end_age,
+                pretax_savings=params.pretax_savings, posttax_savings=params.posttax_savings,
+                salary=params.salary, salary_growth_rate=params.salary_growth_rate,
+                pretax_savings_rate=params.pretax_savings_rate, posttax_savings_rate=params.posttax_savings_rate,
+                employer_match_rate=params.employer_match_rate, employer_match_cap=params.employer_match_cap,
+                annual_spending=spending, num_simulations=num_simulations, tax_region=params.tax_region
+            )
+
+            # Run fast Monte Carlo
+            mc_results = run_monte_carlo_fast(modified_params, returns, num_simulations, rng)
+            results_grid[i, j] = mc_results['success_rate']
+
+            # Calculate mortality-adjusted success if function provided
+            if calculate_mortality_adjusted_fn:
+                mortality_adjusted_grid[i, j] = calculate_mortality_adjusted_fn(
+                    mc_results, ret_age, params.end_age, mortality_table
+                )
+
+    return results_grid, mortality_adjusted_grid
