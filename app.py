@@ -331,17 +331,23 @@ if 'results' in st.session_state and st.session_state['results']:
 
     st.write("---")
     
-    col1_survival, col2_donut = st.columns(2)
-    with col1_survival:
-        st.subheader(t("survival_probability", L), help=h("survival_probability", L))
-        survival_prob_df = pd.DataFrame.from_dict(results['survival_probability'], orient='index', columns=['Survival Probability (%)'])
-        survival_prob_df.index.name = 'Age'
-        survival_prob_df = survival_prob_df.loc[survival_prob_df.index >= params.retirement_age]
-        fig_survival = go.Figure(go.Scatter(x=survival_prob_df.index, y=survival_prob_df['Survival Probability (%)'], mode='lines', name='Survival %', fill='tozeroy'))
-        fig_survival.update_layout(title=t("portfolio_survival_title", L), xaxis_title=t("age", L), yaxis_title=t("prob_not_running_out", L))
-        fig_survival.update_yaxes(range=[0, 100])
-        st.plotly_chart(fig_survival, use_container_width=True)
-        figs.append(fig_survival)
+    col1_retirement, col2_donut = st.columns(2)
+    with col1_retirement:
+        st.subheader(t("money_at_retirement_title", L, retirement_age=params.retirement_age))
+        if params.retirement_age in results['balance_percentiles']:
+            percentile_values_retirement = [results['balance_percentiles'][params.retirement_age][p] for p in percentiles_to_show]
+            bar_fig_retirement = go.Figure(go.Bar(
+                x=percentile_labels, y=percentile_values_retirement,
+                text=[f"${v:,.0f}" for v in percentile_values_retirement],
+                textposition='auto', marker_color=['#d73027', '#fee08b', '#1a9850', '#1a9850', '#1a9850']
+            ))
+            bar_fig_retirement.update_layout(
+                title_text=t("range_of_outcomes_retirement", L, retirement_age=params.retirement_age),
+                xaxis_title=t("scenario_outcome", L), yaxis_title=t("portfolio_balance", L)
+            )
+            st.plotly_chart(bar_fig_retirement, use_container_width=True)
+            st.info(t("info_bar_chart_retirement", L, retirement_age=params.retirement_age))
+            figs.append(bar_fig_retirement)
     
     with col2_donut:
         st.subheader(t("portfolio_composition", L), help=h("portfolio_composition", L))
