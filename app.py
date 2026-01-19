@@ -299,7 +299,11 @@ if 'results' in st.session_state and st.session_state['results']:
         figs.append(bar_fig_end)
 
     if results['probability_of_ruin'] > 0:
-        st.warning(t("ruin_warning", L, prob=results['probability_of_ruin'], years=results['average_shortfall_years']))
+        lifetime_ruin_prob = 100 - mortality_adjusted_success
+        st.warning(t("ruin_warning", L,
+                     lifetime_prob=lifetime_ruin_prob,
+                     age_prob=results['probability_of_ruin'],
+                     end_age=params.end_age))
     
     st.write("---")
     st.header(t("portfolio_trajectory", L))
@@ -315,7 +319,12 @@ if 'results' in st.session_state and st.session_state['results']:
     final_age_traj = ages[-1]
     final_values_traj = {p: percentiles_df[f'{p}th'].iloc[-1] for p in [5, 25, 50, 75, 95]}
     for p_val, color, dash in [(50, 'blue', None), (95, 'green', 'dot'), (75, 'lightgreen', 'dot'), (25, 'orange', 'dot'), (5, 'red', 'dot')]:
-        fig_trajectories.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df[f'{p_val}th'], mode='lines', name=t(f"percentile_{p_val}th_legend", L), line=dict(color=color, width=3 if p_val==50 else 1, dash=dash)))
+        fig_trajectories.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df[f'{p_val}th'], mode='lines', name=t(f"percentile_{p_val}th_legend", L), line=dict(color=color, width=4 if p_val==50 else 2, dash=dash)))
+    # Add retirement age marker
+    if params.retirement_age in percentiles_df.index:
+        retirement_balance = percentiles_df.loc[params.retirement_age, '50th']
+        fig_trajectories.add_vline(x=params.retirement_age, line_dash="dash", line_color="gray", opacity=0.7)
+        fig_trajectories.add_annotation(x=params.retirement_age, y=retirement_balance, text=f"Retirement: ${retirement_balance:,.0f}", showarrow=True, arrowhead=2, ay=-40)
     fig_trajectories.update_layout(title=t("portfolio_balance_title", L), xaxis_title=t("age", L), yaxis_title=t("portfolio_balance", L), hovermode="x unified", margin=dict(r=100))
     st.plotly_chart(fig_trajectories, use_container_width=True)
     figs.append(fig_trajectories)
