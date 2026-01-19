@@ -59,7 +59,8 @@ def get_survival_curve(current_age, end_age, mortality_table):
 
 def calculate_mortality_adjusted_success(mc_results, retirement_age, sim_end_age, mortality_table):
     mortality_adjusted = 0.0
-    portfolio_survival_at_end = mc_results['survival_probability'].get(sim_end_age - 1, 0) / 100
+    portfolio_survival_at_end = mc_results['survival_probability'].get(sim_end_age,
+        mc_results['survival_probability'].get(sim_end_age - 1, 0)) / 100
     for t in range(retirement_age, MAX_AGE):
         survival_to_t = calculate_survival_probability(retirement_age, t, mortality_table)
         q_t = mortality_table.get(t, 1.0)

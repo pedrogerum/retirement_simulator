@@ -130,7 +130,8 @@ def get_return_sequence(returns: pd.Series, num_years: int, start_year: int = No
         if current_year in years:
             sequence.append(returns[current_year])
         else:
-            current_year = years[0]
+            # Block resampling: pick random new start point, continue sequentially
+            current_year = np.random.choice(years)
             sequence.append(returns[current_year])
         current_year += 1
     return np.array(sequence), start_year
@@ -172,10 +173,14 @@ def run_single_simulation(params: SimulationParams, returns: pd.Series, mortalit
             remaining_need -= posttax_withdrawal
             if remaining_need > 0 and pretax > 0:
                 pretax_withdrawal = remaining_need
-                for _ in range(5):
+                prev_withdrawal = 0
+                for _ in range(10):  # More iterations with convergence check
                     tax = tax_calculator(pretax_withdrawal)
                     needed_gross = remaining_need + tax
                     pretax_withdrawal = min(pretax, needed_gross)
+                    if abs(pretax_withdrawal - prev_withdrawal) < 0.01:
+                        break
+                    prev_withdrawal = pretax_withdrawal
                 tax_paid = tax_calculator(pretax_withdrawal)
                 pretax -= pretax_withdrawal
             withdrawal = spending_need
