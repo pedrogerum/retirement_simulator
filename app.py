@@ -380,12 +380,13 @@ if 'results' in st.session_state and st.session_state['results']:
             x=mortality_ages, y=mortality_probs, mode='lines', name=t("prob_being_alive", L),
             fill='tozeroy', line=dict(color='green', width=2), fillcolor='rgba(0, 128, 0, 0.2)'
         ))
-        expected_age = params.retirement_age + sum(calculate_survival_probability(params.retirement_age, age_iter + 1, selected_mortality_table) for age_iter in range(params.retirement_age, MAX_AGE))
-        fig_combined.add_annotation(x=expected_age, y=calculate_survival_probability(params.retirement_age, int(expected_age), selected_mortality_table) * 100, text=f"Expected: {expected_age:.1f}", showarrow=True, arrowhead=2)
+        # Calculate life expectancy (expected age) - the average age at death for someone currently this age
+        life_expectancy = params.retirement_age + sum(calculate_survival_probability(params.retirement_age, age + 1, selected_mortality_table) for age in range(params.retirement_age, MAX_AGE))
+        fig_combined.add_annotation(x=life_expectancy, y=calculate_survival_probability(params.retirement_age, int(life_expectancy), selected_mortality_table) * 100, text=f"Life Expectancy: {life_expectancy:.1f}", showarrow=True, arrowhead=2)
         fig_combined.update_layout(title=t("alive_at_age_title", L, age=params.retirement_age), xaxis_title=t("age", L), yaxis_title=t("probability_percent", L), hovermode="x unified", legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99))
         fig_combined.update_yaxes(range=[0, 100])
         st.plotly_chart(fig_combined, use_container_width=True)
-        st.info(t("info_mortality_curve", L, expected_age=expected_age))
+        st.info(t("info_mortality_curve", L, life_expectancy=life_expectancy))
 
     with col2:
         st.markdown(f"**{t('lifetime_ruin_risk', L)}**", help=h("lifetime_ruin_risk", L))
