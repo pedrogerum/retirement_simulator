@@ -1,749 +1,325 @@
-"""
-Translations and help text for the Retirement Simulator app.
-Supports English (EN) and Portuguese (PT).
-"""
+translations = {
+    "EN": {
+        "main_title": "Retirement Readiness Simulator",
+        "main_subtitle": "How likely is it that you will outlive your money? Find out with this Monte Carlo simulation tool.",
+        "market_data_source": "Market Data Source",
+        "simulation_parameters": "Simulation Parameters",
+        "personal_details": "Personal Details",
+        "current_age": "Current Age",
+        "retirement_age": "Retirement Age",
+        "end_age": "End Age",
+        "current_savings": "Current Savings",
+        "pretax_savings": "Pre-tax Savings",
+        "posttax_savings": "Post-tax Savings",
+        "income_savings": "Income & Savings",
+        "current_salary": "Current Salary",
+        "salary_growth_rate": "Salary Growth Rate",
+        "pretax_savings_rate": "Pre-tax Savings Rate",
+        "posttax_savings_rate": "Post-tax Savings Rate",
+        "employer_match_rate": "Employer Match Rate",
+        "employer_match_cap": "Employer Match Cap",
+        "retirement_spending": "Retirement Spending",
+        "annual_spending": "Annual Spending",
+        "simulation_settings": "Simulation Settings",
+        "num_simulations": "Number of Simulations",
+        "run_simulation": "Run Simulation",
+        "running_simulations": "Running simulations...",
+        "simulation_summary": "Simulation Summary",
+        "simulation_details": "Simulation Details & Assumptions",
+        "info_market_assumptions_us": "**Market Assumptions (US):** The simulation uses historical data from the S&P 500 index (a proxy for the US stock market) to model random future returns. All returns are inflation-adjusted.",
+        "info_market_assumptions_br": "**Market Assumptions (Brazil):** The simulation uses historical real returns from CDI (fixed income benchmark) to model random future returns. All returns are already inflation-adjusted (real returns).",
+        "info_tax_assumptions_us": "**Tax Assumptions (US):** The model uses a simplified version of the current federal income tax brackets. It does not account for state/local taxes, and assumes tax brackets are inflation-adjusted.",
+        "info_tax_assumptions_br": "**Tax Assumptions (Brazil):** The model uses a simplified 10% flat tax rate on withdrawals from PGBL accounts (simulating the regressive table after 10+ years). Withdrawals from post-tax accounts (VGBL, etc.) are assumed tax-free on the principal.",
+        "info_tax_assumptions": "**Tax Assumptions:** The model uses a simplified version of the current federal income tax brackets for the selected region. It does not account for state/local taxes, and assumes tax brackets are inflation-adjusted.",
+        "money_lasts_lifetime": "Probability Money Lasts Your Lifetime",
+        "money_left_at_death_title": "Inheritance at Death",
+        "range_of_outcomes_title_death": "Range of Inheritance Outcomes",
+        "scenario_outcome": "Scenario Outcome",
+        "final_portfolio_value": "Final Portfolio Value",
+        "info_bar_chart_death": "This chart shows the range of final portfolio values at the time of death, representing what could be left as an inheritance. The values are shown for pessimistic (5th percentile), average (50th percentile), and optimistic (95th percentile) scenarios.",
+        "money_left_at_age_gauge": "Probability of Money Left at Age {age}",
+        "solvent_at_age": "Probability of being solvent at age {age}.",
+        "money_left_at_age": "Money Left at Age {age}",
+        "range_of_outcomes_title": "Range of Outcomes at Age {end_age}",
+        "info_bar_chart_end_age": "This chart shows the range of final portfolio values at your simulation's end age. The values are shown for pessimistic (5th percentile), average (50th percentile), and optimistic (95th percentile) scenarios. If you live beyond this age, your actual outcome could differ.",
+        "ruin_warning": "Warning: There is a {prob:.1f}% chance of running out of money. On average, this occurs after {years:.1f} years.",
+        "portfolio_trajectory": "Portfolio Trajectory",
+        "balance_trajectories": "Range of Portfolio Balances Over Time",
+        "portfolio_balance_title": "Portfolio Balance Over Time",
+        "age": "Age",
+        "portfolio_balance": "Portfolio Balance",
+        "percentile_5th_legend": "5th Percentile (Pessimistic)",
+        "percentile_25th_legend": "25th Percentile",
+        "percentile_50th_legend": "50th Percentile (Median)",
+        "percentile_75th_legend": "75th Percentile",
+        "percentile_95th_legend": "95th Percentile (Optimistic)",
+        "survival_probability": "Portfolio Survival Probability",
+        "portfolio_survival_title": "Portfolio Survival Probability Over Time",
+        "prob_not_running_out": "Probability of Not Running Out of Money",
+        "portfolio_composition": "What Built Your Nest Egg?",
+        "initial_savings": "Initial Savings",
+        "total_contributions": "Total Contributions",
+        "market_growth": "Market Growth",
+        "what_built_nest_egg": "Projected Composition of Your Portfolio at Retirement",
+        "mortality_adjusted_analysis": "Advanced: Mortality-Adjusted Analysis",
+        "mortality_description": "This advanced analysis combines the simulation results with life expectancy data to provide a more holistic view of your retirement plan's risk.",
+        "mortality_curve": "Your Personal Survival Curve",
+        "prob_being_alive": "Probability of Being Alive",
+        "alive_at_age_title": "Probability of Being Alive at a Given Age (starting from age {age})",
+        "probability_percent": "Probability (%)",
+        "info_mortality_curve": "This curve shows the statistical probability of a person of your age & region living to each subsequent age. The 'Expected Age' of {expected_age:.1f} is the average, meaning you have a 50% chance of living longer.",
+        "lifetime_ruin_risk": "Lifetime Risk of Ruin",
+        "remaining_ruin_risk": "Remaining Ruin Risk",
+        "at_retirement": "At retirement: {value:.1f}%",
+        "ruin_risk_title": "Probability of Running Out of Money Before Death",
+        "info_ruin_risk_curve": "This curve shows the probability of your portfolio running out of money **before you die**, calculated from any given age. At retirement, your total lifetime risk of ruin is {retirement_risk:.1f}%. As you age, this risk decreases because you have fewer remaining years to fund.",
+        "cash_flow_table": "Cash Flow Details (Median Simulation)",
+        "salary": "Salary",
+        "contribution": "Contribution",
+        "employer_match": "Employer Match",
+        "withdrawal": "Withdrawal",
+        "tax_paid": "Tax Paid",
+        "real_return": "Real Return",
+        "pretax_balance": "Pre-tax Balance",
+        "posttax_balance": "Post-tax Balance",
+        "total_balance": "Total Balance",
+        "sensitivity_analysis": "Sensitivity Analysis",
+        "sensitivity_description": "How do small changes affect your plan? This heatmap shows how your success rate changes with different retirement ages and spending levels.",
+        "retirement_age_years": "Retirement Age (Years from Plan)",
+        "spending_change": "Annual Spending (Change from Plan)",
+        "success_rate": "Success Rate",
+        "portfolio_survival_heatmap_title": "Portfolio Survival Heatmap (Success Rate at age {age})",
+        "money_lasts_lifetime_title": "Money Lasts a Lifetime (Mortality-Adjusted Success Rate)",
+        "info_sensitivity_explanation": "This chart shows how your success rate changes based on adjustments to your retirement age and annual spending. Use it to find a risk level you're comfortable with.",
+        "info_simulation_methodology": "**How the Simulation Works:** This tool runs {num_simulations:,} Monte Carlo simulations. Each simulation randomly samples historical market returns to create a unique possible future. For example, one simulation might experience a market crash early in retirement, while another might see steady growth. By running thousands of these scenarios, we can estimate the probability of different outcomes.",
+        "info_mortality_source": "**Mortality Data:** Life expectancy calculations use the 2024 SSA Period Life Table for the US population.",
+        "info_mortality_source_br": "**Mortality Data:** Life expectancy calculations use the 2024 IBGE Complete Mortality Table for the Brazilian population.",
+        "info_sensitivity_portfolio_survival": "**Portfolio Survival at Age {age}:** This heatmap shows the percentage of simulations where your money lasted until age {age}. For example, if a cell shows 85%, it means that in 85 out of 100 simulated futures, you still had money remaining at age {age}. This metric does not account for the probability of you living to that age.",
+        "info_sensitivity_mortality_adjusted": "**Mortality-Adjusted Success Rate:** This heatmap combines portfolio survival with life expectancy. For example, if you have a 90% chance of your portfolio lasting to age 95, but only a 50% chance of living that long, the mortality-adjusted rate accounts for both factors. This gives a more realistic picture of the probability that you won't outlive your money.",
+        "simulation_details": "Simulation Details",
+        "years_covered": "Years covered in the simulation: {min} to {max}",
+        "mean_real_return": "Mean real return: {value:.2%}",
+        "std_real_return": "Standard deviation of real return: {value:.2%}",
+        "historical_context": "Historical Context",
+        "historical_real_returns": "Historical Real Returns for {market}",
+        "year": "Year",
+        "real_return_percent": "Real Return (%)",
+        "key_historical_events": "Key Historical Events",
+        "event": "Event",
+        "description": "Description",
+        "stress_test_title": "Historical Stress Test",
+        "stress_test_description": "This chart stress-tests your plan by simulating what would have happened if you had retired right at the beginning of major historical market downturns.",
+        "stress_test_chart_title": "Portfolio Performance in Historical Scenarios",
+        "years_in_retirement": "Years in Retirement",
+        "stress_test_results": "Stress Test Results",
+        "starting_balance": "Starting Balance",
+        "outcome": "Outcome",
+        "survived": "Survived with ${balance:,.0f}",
+        "depleted": "Depleted in year {years}",
+        "stress_all_survived": "All {total} historical scenarios survived.",
+        "stress_all_failed": "All {total} historical scenarios failed.",
+        "stress_partial": "{survivors} out of {total} historical scenarios survived.",
+        "download_report": "Download Report",
+        "generate_pdf": "Generate PDF",
+        "generating_pdf": "Generating PDF...",
+        "download_pdf": "Download PDF",
+        "percentile_5th_label": "Worst 5% (Pessimistic)",
+        "percentile_25th_label": "Bottom 25%",
+        "percentile_50th_label": "Median",
+        "percentile_75th_label": "Top 25%",
+        "percentile_95th_label": "Best 5% (Optimistic)",
+    },
+    "PT": {
+        "main_title": "Simulador de Aposentadoria",
+        "main_subtitle": "Qual a probabilidade de o seu dinheiro acabar antes de você? Descubra com esta ferramenta de simulação de Monte Carlo.",
+        "market_data_source": "Fonte de Dados do Mercado",
+        "simulation_parameters": "Parâmetros da Simulação",
+        "personal_details": "Detalhes Pessoais",
+        "current_age": "Idade Atual",
+        "retirement_age": "Idade de Aposentadoria",
+        "end_age": "Idade Final",
+        "current_savings": "Poupança Atual",
+        "pretax_savings": "Previdência (PGBL)",
+        "posttax_savings": "Outros Investimentos (VGBL, etc)",
+        "income_savings": "Renda e Poupança",
+        "current_salary": "Salário Atual",
+        "salary_growth_rate": "Taxa de Crescimento Salarial",
+        "pretax_savings_rate": "Taxa de Poupança (PGBL)",
+        "posttax_savings_rate": "Taxa de Poupança (Outros)",
+        "employer_match_rate": "Contrapartida da Empresa",
+        "employer_match_cap": "Teto da Contrapartida",
+        "retirement_spending": "Gastos na Aposentadoria",
+        "annual_spending": "Gasto Anual",
+        "simulation_settings": "Configurações da Simulação",
+        "num_simulations": "Número de Simulações",
+        "run_simulation": "Executar Simulação",
+        "running_simulations": "Executando simulações...",
+        "simulation_summary": "Resumo da Simulação",
+        "simulation_details": "Detalhes e Premissas da Simulação",
+        "info_market_assumptions_us": "**Premissas de Mercado (EUA):** A simulação usa dados históricos do índice S&P 500 (uma proxy para o mercado de ações dos EUA) para modelar retornos futuros aleatórios. Todos os retornos são ajustados pela inflação.",
+        "info_market_assumptions_br": "**Premissas de Mercado (Brasil):** A simulação usa dados históricos de retorno real do CDI (referência de renda fixa) para modelar retornos futuros aleatórios. Todos os retornos já são ajustados pela inflação (retornos reais).",
+        "info_tax_assumptions_us": "**Premissas de Impostos (EUA):** O modelo usa uma versão simplificada das tabelas de imposto de renda federal atuais. Não leva em conta impostos estaduais/municipais e assume que as tabelas são ajustadas pela inflação.",
+        "info_tax_assumptions_br": "**Premissas de Impostos (Brasil):** O modelo usa uma alíquota simplificada de 10% sobre resgates de contas PGBL (simulando a tabela regressiva após 10+ anos). Resgates de contas pós-imposto (VGBL, etc.) são considerados isentos de imposto sobre o principal.",
+        "info_tax_assumptions": "**Premissas de Impostos:** O modelo usa uma versão simplificada das tabelas de imposto de renda federal atuais para a região selecionada. Não leva em conta impostos estaduais/municipais e assume que as tabelas são ajustadas pela inflação.",
+        "money_lasts_lifetime": "Probabilidade do Dinheiro Durar a Vida Inteira",
+        "money_left_at_death_title": "Herança na Morte",
+        "range_of_outcomes_title_death": "Gama de Valores de Herança",
+        "scenario_outcome": "Cenário",
+        "final_portfolio_value": "Valor Final do Portfólio",
+        "info_bar_chart_death": "Este gráfico mostra a gama de valores finais do portfólio no momento da morte, representando o que poderia ser deixado como herança. Os valores são mostrados para cenários pessimistas (percentil 5), médios (percentil 50) e otimistas (percentil 95).",
+        "money_left_at_age_gauge": "Probabilidade de ter Dinheiro aos {age} Anos",
+        "solvent_at_age": "Probabilidade de estar solvente aos {age} anos.",
+        "money_left_at_age": "Dinheiro Restante aos {age} Anos",
+        "range_of_outcomes_title": "Gama de Resultados aos {end_age} Anos",
+        "info_bar_chart_end_age": "Este gráfico mostra a gama de valores finais do portfólio no final da sua simulação. Os valores são mostrados para cenários pessimistas (percentil 5), médios (percentil 50) e otimistas (percentil 95). Se você viver além dessa idade, seu resultado real pode diferir.",
+        "ruin_warning": "Aviso: Há uma chance de {prob:.1f}% de seu dinheiro acabar. Em média, isso ocorre após {years:.1f} anos.",
+        "portfolio_trajectory": "Trajetória do Portfólio",
+        "balance_trajectories": "Gama de Saldos do Portfólio ao Longo do Tempo",
+        "portfolio_balance_title": "Saldo do Portfólio ao Longo do Tempo",
+        "age": "Idade",
+        "portfolio_balance": "Saldo do Portfólio",
+        "percentile_5th_legend": "5º Percentil (Pessimista)",
+        "percentile_25th_legend": "25% Piores",
+        "percentile_50th_legend": "50º Percentil (Mediana)",
+        "percentile_75th_legend": "25% Melhores",
+        "percentile_95th_legend": "95º Percentil (Otimista)",
+        "survival_probability": "Probabilidade de Sobrevivência do Portfólio",
+        "portfolio_survival_title": "Probabilidade de Sobrevivência do Portfólio ao Longo do Tempo",
+        "prob_not_running_out": "Probabilidade de Não Ficar sem Dinheiro",
+        "portfolio_composition": "O Que Construiu Seu Patrimônio?",
+        "initial_savings": "Poupança Inicial",
+        "total_contributions": "Contribuições Totais",
+        "market_growth": "Crescimento do Mercado",
+        "what_built_nest_egg": "Composição Projetada do Seu Portfólio na Aposentadoria",
+        "mortality_adjusted_analysis": "Análise Avançada: Ajustada à Mortalidade",
+        "mortality_description": "Esta análise avançada combina os resultados da simulação com dados de expectativa de vida para fornecer uma visão mais holística do risco do seu plano de aposentadoria.",
+        "mortality_curve": "Sua Curva de Sobrevivência Pessoal",
+        "prob_being_alive": "Probabilidade de Estar Vivo",
+        "alive_at_age_title": "Probabilidade de Estar Vivo em uma Determinada Idade (a partir dos {age} anos)",
+        "probability_percent": "Probabilidade (%)",
+        "info_mortality_curve": "Esta curva mostra a probabilidade estatística de uma pessoa da sua idade e região viver até cada idade futura. A 'Idade Esperada' de {expected_age:.1f} anos é a média, o que significa que você tem 50% de chance de viver mais.",
+        "lifetime_ruin_risk": "Risco de Ruína Vitalício",
+        "remaining_ruin_risk": "Risco de Ruína Remanescente",
+        "at_retirement": "Na aposentadoria: {value:.1f}%",
+        "ruin_risk_title": "Probabilidade de Ficar sem Dinheiro Antes de Morrer",
+        "info_ruin_risk_curve": "Esta curva mostra a probabilidade de seu portfólio acabar **antes de você morrer**, calculada a partir de qualquer idade. Na aposentadoria, seu risco total de ruína vitalício é de {retirement_risk:.1f}%. Conforme você envelhece, este risco diminui porque há menos anos restantes para financiar.",
+        "cash_flow_table": "Detalhes do Fluxo de Caixa (Simulação Mediana)",
+        "salary": "Salário",
+        "contribution": "Contribuição",
+        "employer_match": "Contrapartida do Empregador",
+        "withdrawal": "Retirada",
+        "tax_paid": "Imposto Pago",
+        "real_return": "Retorno Real",
+        "pretax_balance": "Saldo Previdência (PGBL)",
+        "posttax_balance": "Saldo Outros Investimentos",
+        "total_balance": "Saldo Total",
+        "sensitivity_analysis": "Análise de Sensibilidade",
+        "sensitivity_description": "Como pequenas mudanças afetam seu plano? Este mapa de calor mostra como sua taxa de sucesso muda com diferentes idades de aposentadoria e níveis de gastos.",
+        "retirement_age_years": "Idade de Aposentadoria (Anos do Plano)",
+        "spending_change": "Gasto Anual (Mudança do Plano)",
+        "success_rate": "Taxa de Sucesso",
+        "portfolio_survival_heatmap_title": "Mapa de Calor de Sobrevivência do Portfólio (Taxa de Sucesso aos {age} anos)",
+        "money_lasts_lifetime_title": "Dinheiro Dura a Vida Inteira (Taxa de Sucesso Ajustada à Mortalidade)",
+        "info_sensitivity_explanation": "Este gráfico mostra como sua taxa de sucesso muda com base em ajustes na sua idade de aposentadoria e gastos anuais. Use-o para encontrar um nível de risco com o qual você se sinta confortável.",
+        "info_simulation_methodology": "**Como a Simulação Funciona:** Esta ferramenta executa {num_simulations:,} simulações de Monte Carlo. Cada simulação amostra aleatoriamente retornos históricos do mercado para criar um futuro possível único. Por exemplo, uma simulação pode experimentar uma queda do mercado no início da aposentadoria, enquanto outra pode ver crescimento constante. Ao executar milhares desses cenários, podemos estimar a probabilidade de diferentes resultados.",
+        "info_mortality_source": "**Dados de Mortalidade:** Os cálculos de expectativa de vida utilizam a Tábua de Mortalidade SSA de 2024 para a população dos EUA.",
+        "info_mortality_source_br": "**Dados de Mortalidade:** Os cálculos de expectativa de vida utilizam a Tábua Completa de Mortalidade do IBGE de 2024 para a população brasileira.",
+        "info_sensitivity_portfolio_survival": "**Sobrevivência do Portfólio aos {age} Anos:** Este mapa de calor mostra a porcentagem de simulações em que seu dinheiro durou até os {age} anos. Por exemplo, se uma célula mostra 85%, significa que em 85 de 100 futuros simulados, você ainda tinha dinheiro restante aos {age} anos. Esta métrica não considera a probabilidade de você viver até essa idade.",
+        "info_sensitivity_mortality_adjusted": "**Taxa de Sucesso Ajustada à Mortalidade:** Este mapa de calor combina a sobrevivência do portfólio com a expectativa de vida. Por exemplo, se você tem 90% de chance de seu portfólio durar até os 95 anos, mas apenas 50% de chance de viver até lá, a taxa ajustada à mortalidade considera ambos os fatores. Isso fornece uma imagem mais realista da probabilidade de você não sobreviver ao seu dinheiro.",
+        "simulation_details": "Detalhes da Simulação",
+        "years_covered": "Anos cobertos na simulação: {min} a {max}",
+        "mean_real_return": "Retorno real médio: {value:.2%}",
+        "std_real_return": "Desvio padrão do retorno real: {value:.2%}",
+        "historical_context": "Contexto Histórico",
+        "historical_real_returns": "Retornos Reais Históricos para {market}",
+        "year": "Ano",
+        "real_return_percent": "Retorno Real (%)",
+        "key_historical_events": "Principais Eventos Históricos",
+        "event": "Evento",
+        "description": "Descrição",
+        "stress_test_title": "Teste de Estresse Histórico",
+        "stress_test_description": "Este gráfico testa seu plano em situações de estresse, simulando o que teria acontecido se você tivesse se aposentado logo no início das principais crises de mercado da história.",
+        "stress_test_chart_title": "Desempenho do Portfólio em Cenários Históricos",
+        "years_in_retirement": "Anos na Aposentadoria",
+        "stress_test_results": "Resultados do Teste de Estresse",
+        "starting_balance": "Saldo Inicial",
+        "outcome": "Resultado",
+        "survived": "Sobreviveu com ${balance:,.0f}",
+        "depleted": "Esgotado no ano {years}",
+        "stress_all_survived": "Todos os {total} cenários históricos sobreviveram.",
+        "stress_all_failed": "Todos os {total} cenários históricos falharam.",
+        "stress_partial": "{survivors} de {total} cenários históricos sobreviveram.",
+        "download_report": "Baixar Relatório",
+        "generate_pdf": "Gerar PDF",
+        "generating_pdf": "Gerando PDF...",
+        "download_pdf": "Baixar PDF",
+        "percentile_5th_label": "5% Piores (Pessimista)",
+        "percentile_25th_label": "25% Piores",
+        "percentile_50th_label": "Mediana",
+        "percentile_75th_label": "25% Melhores",
+        "percentile_95th_label": "5% Melhores (Otimista)",
+    }
+}
 
-TRANSLATIONS = {
-    # Page title and header
-    "page_title": {
-        "EN": "Retirement Simulator",
-        "PT": "Simulador de Aposentadoria"
+help_texts = {
+    "EN": {
+        "current_age": "Enter your current age in years. This is the starting point for the simulation.",
+        "retirement_age": "The age you plan to stop working and start living off your savings. This is a key factor in determining how long your money needs to last.",
+        "end_age": "The age you want the simulation to run until. This is often set to your estimated life expectancy or longer, like 95 or 100, to be safe.",
+        "pretax_savings": "The total amount you have saved in retirement accounts where you haven't paid income taxes yet. You'll pay taxes when you withdraw the money in retirement.\n\n- **In the US:** This includes accounts like a **401(k)**, **Traditional IRA**, **403(b)**, or other employer-sponsored retirement plans.",
+        "posttax_savings": "The total amount you have saved in accounts where you've already paid income taxes. You can generally withdraw this money tax-free in retirement.\n\n- **In the US:** This includes accounts like a **Roth IRA** or a regular taxable brokerage account.",
+        "current_salary": "Your total gross (pre-tax) annual income from your job.",
+        "salary_growth_rate": "The annual percentage increase you expect for your salary until you retire. A common estimate is 1-2% above inflation.",
+        "pretax_savings_rate": "The percentage of your gross salary that you contribute to your pre-tax retirement accounts (like a 401(k) or Traditional IRA).",
+        "posttax_savings_rate": "The percentage of your gross salary that you save in post-tax accounts (like a Roth IRA or a regular brokerage account).",
+        "employer_match_rate": "Many employers match a portion of your retirement contributions. This is the percentage of **your contribution** that your employer matches. For example, a 100% match rate means they put in $1 for every $1 you contribute.",
+        "employer_match_cap": "This is the maximum percentage of **your salary** that your employer will match. For example, if your employer matches up to 6% of your salary, and you save 10%, they will only contribute an amount equal to 6% of your pay.",
+        "annual_spending": "The amount of money you estimate you'll spend each year in retirement. This is one of the most important inputs, as it determines how quickly you draw down your savings.",
+        "num_simulations": "The number of times the simulation will run. Each simulation uses a different random sequence of historical market returns. More simulations (e.g., 1000+) lead to more reliable results but take longer to run. Think of it as running your plan through 1000 different possible futures.",
+        "money_lasts_lifetime": "This is the ultimate success score. It combines the simulation results with mortality data (the probability of you being alive at each age). It answers the question: 'What is the probability that I won't outlive my money?'. It accounts for both market risk (your investments doing poorly) and longevity risk (you living longer than average).",
+        "solvent_at_age": "This is a simpler success rate. It shows the percentage of the {num_simulations} simulations where you still had money left at age {age}. It's a good measure of portfolio strength, but it doesn't consider the chances of you actually living that long.",
+        "balance_trajectories": "This chart shows the range of possible outcomes for your portfolio balance over time. It's a visual representation of the {num_simulations} different futures we simulated.\n\n- The **dark blue line (Median)** is the 50th percentile outcome – half the simulations did better, half did worse.\n- The **green bands (75th/95th percentile)** represent optimistic scenarios.\n- The **red/orange bands (5th/25th percentile)** represent pessimistic scenarios.",
+        "survival_probability": "This chart shows the percentage of simulations where your money has NOT run out yet at each age. A high, flat line is ideal. If the line drops, it shows the age at which your portfolio starts to be depleted in some of the simulated scenarios.",
+        "portfolio_composition": "This chart shows where your money is projected to come from at retirement. It helps you see the power of compound growth.\n\n- **Initial Savings:** The money you're starting with today.\n- **Total Contributions:** All the money you (and your employer) will add to the accounts until you retire.\n- **Market Growth:** The accumulated earnings from your investments. For most long-term plans, this should be the largest piece!",
+        "mortality_curve": "This curve shows the statistical probability of a person of your age and region living to each future age. This data is used to calculate the more advanced 'Probability Money Lasts Your Lifetime' metric. The 'Expected Age' is the average age of death for a person in your demographic, which means you have a 50% chance of living longer than that.",
+        "lifetime_ruin_risk": "This is the flip side of the 'Money Lasts Lifetime' score. It shows, at any given age, what the total probability is that you will run out of money **at some point before you die**. The number at the start (at your retirement age) is the most important one, representing the overall risk of your plan failing.",
+        "sensitivity_analysis": "This heatmap is a powerful tool for understanding trade-offs. It shows how your success rate changes if you tweak your plan.\n\n- The **vertical axis** shows changes in your annual spending.\n- The **horizontal axis** shows changes to your retirement age.\n- **Green is good!** Red is risky. You can use this to see how much retiring a year later or spending a little less could improve your plan's odds.",
+        "stress_test": "This powerful feature tests your retirement plan against the worst market conditions in history. It answers the question: 'What if I was unlucky enough to retire right at the start of the Great Depression, or the 2008 financial crisis?'. If your plan can survive these scenarios, it's a very good sign that it's robust."
     },
-    "main_title": {
-        "EN": "Retirement Monte Carlo Simulator",
-        "PT": "Simulador Monte Carlo de Aposentadoria"
-    },
-    "main_subtitle": {
-        "EN": "Plan your financial future with historical market data simulations.",
-        "PT": "Planeje seu futuro financeiro com simulacoes baseadas em dados historicos do mercado."
-    },
+    "PT": {
+        "current_age": "Digite sua idade atual em anos. Este é o ponto de partida para a simulação.",
+        "retirement_age": "A idade em que você planeja parar de trabalhar e começar a viver de suas economias. Este é um fator chave para determinar por quanto tempo seu dinheiro precisa durar.",
+        "end_age": "A idade até a qual você deseja que a simulação seja executada. Geralmente, é definida para sua expectativa de vida estimada ou mais, como 95 ou 100, para ter uma margem de segurança.",
+        "pretax_savings": "O valor total que você economizou em contas de aposentadoria onde o imposto de renda é pago apenas no resgate.\n\n- **No Brasil:** Isso inclui planos como o **PGBL (Plano Gerador de Benefício Livre)**. As contribuições podem ser deduzidas da base de cálculo do seu IR, até o limite de 12% da sua renda bruta anual.",
+        "posttax_savings": "O valor total que você economizou em contas onde o imposto de renda já foi pago (na aplicação ou nos rendimentos). Geralmente, o valor principal resgatado é isento de imposto no futuro.\n\n- **No Brasil:** Isso inclui planos como o **VGBL (Vida Gerador de Benefício Livre)**, onde o IR incide apenas sobre os rendimentos, além de outros investimentos como **CDBs, LCIs/LCAs, Fundos de Investimento e Tesouro Direto**.",
+        "current_salary": "Sua renda anual total bruta (antes de impostos) do seu trabalho.",
+        "salary_growth_rate": "O aumento percentual anual que você espera para o seu salário até se aposentar. Uma estimativa comum é de 1-2% acima da inflação.",
+        "pretax_savings_rate": "O percentual do seu salário bruto que você contribui para suas contas de aposentadoria pré-imposto (como um PGBL).",
+        "posttax_savings_rate": "O percentual do seu salário bruto que você economiza em contas pós-imposto (como um VGBL ou outros investimentos).",
+        "employer_match_rate": "Muitos empregadores oferecem uma contrapartida às contribuições de seus funcionários para a previdência. Esta é a porcentagem da **sua contribuição** que seu empregador iguala. Por exemplo, uma taxa de 100% significa que eles colocam R$1 para cada R$1 que você contribui.",
+        "employer_match_cap": "Este é o percentual máximo do **seu salário** que seu empregador irá igualar. Por exemplo, se seu empregador oferece contrapartida de até 6% do seu salário e você economiza 10%, ele contribuirá com um valor equivalente a 6% do seu pagamento.",
+        "annual_spending": "A quantia de dinheiro que você estima que gastará a cada ano na aposentadoria. Este é um dos dados mais importantes, pois determina a rapidez com que você usará suas economias.",
+        "num_simulations": "O número de vezes que a simulação será executada. Cada simulação usa uma sequência aleatória diferente de retornos históricos do mercado. Mais simulações (ex: 1000+) levam a resultados mais confiáveis, mas demoram mais para rodar. Pense nisso como testar seu plano em 1000 futuros possíveis diferentes.",
+        "money_lasts_lifetime": "Esta é a pontuação final de sucesso. Ela combina os resultados da simulação com dados de mortalidade (a probabilidade de você estar vivo em cada idade). Responde à pergunta: 'Qual é a probabilidade de eu não sobreviver ao meu dinheiro?'. Leva em conta tanto o risco de mercado (seus investimentos terem um desempenho ruim) quanto o risco de longevidade (você viver mais que a média).",
+        "solvent_at_age": "Esta é uma taxa de sucesso mais simples. Mostra a porcentagem das {num_simulations} simulações em que você ainda tinha dinheiro restante aos {age} anos. É uma boa medida da força do portfólio, mas não considera as chances de você realmente viver tanto.",
+        "balance_trajectories": "Este gráfico mostra a gama de resultados possíveis para o saldo do seu portfólio ao longo do tempo. É uma representação visual dos {num_simulations} futuros diferentes que simulamos.\n\n- A **linha azul escura (Mediana)** é o resultado do percentil 50 – metade das simulações teve um desempenho melhor, metade pior.\n- As **bandas verdes (percentil 75/95)** representam cenários otimistas.\n- As **bandas vermelhas/laranjas (percentil 5/25)** representam cenários pessimistas.",
+        "survival_probability": "Este gráfico mostra a porcentagem de simulações em que seu dinheiro AINDA NÃO acabou em cada idade. Uma linha alta e plana é o ideal. Se a linha cair, ela mostra a idade em que seu portfólio começa a se esgotar em alguns dos cenários simulados.",
+        "portfolio_composition": "Este gráfico mostra de onde virá seu dinheiro na aposentadoria. Ajuda a ver o poder do crescimento composto.\n\n- **Poupança Inicial:** O dinheiro com que você está começando hoje.\n- **Contribuições Totais:** Todo o dinheiro que você (e seu empregador) adicionarão às contas até você se aposentar.\n- **Crescimento do Mercado:** Os ganhos acumulados de seus investimentos. Para a maioria dos planos de longo prazo, esta deve ser a maior parte!",
+        "mortality_curve": "Esta curva mostra a probabilidade estatística de uma pessoa da sua idade e região viver até cada idade futura. Esses dados são usados para calcular a métrica mais avançada 'Probabilidade do Dinheiro Durar a Vida Inteira'. A 'Idade Esperada' é a idade média de morte para uma pessoa em sua demografia, o que significa que você tem 50% de chance de viver mais do que isso.",
+        "lifetime_ruin_risk": "Este é o outro lado da pontuação 'Dinheiro Dura a Vida Inteira'. Mostra, em qualquer idade, qual é a probabilidade total de que você ficará sem dinheiro **em algum momento antes de morrer**. O número no início (na sua idade de aposentadoria) é o mais importante, representando o risco geral de falha do seu plano.",
+        "sensitivity_analysis": "Este mapa de calor é uma ferramenta poderosa para entender as compensações. Ele mostra como sua taxa de sucesso muda se você ajustar seu plano.\n\n- O **eixo vertical** mostra mudanças em seus gastos anuais.\n- O **eixo horizontal** mostra mudanças em sua idade de aposentadoria.\n- **Verde é bom!** Vermelho é arriscado. Você pode usar isso para ver o quanto se aposentar um ano depois ou gastar um pouco menos pode melhorar as chances do seu plano.",
+        "stress_test": "Este recurso poderoso testa seu plano de aposentadoria contra as piores condições de mercado da história. Ele responde à pergunta: 'E se eu tivesse a má sorte de me aposentar bem no início de uma grande crise, como a de 2008 no Brasil ou a Grande Depressão nos EUA?'. Se o seu plano pode sobreviver a esses cenários, é um ótimo sinal de que ele é robusto."
+    }
+}
 
-    # Sidebar sections
-    "simulation_parameters": {
-        "EN": "Simulation Parameters",
-        "PT": "Parametros da Simulacao"
-    },
-    "language": {
-        "EN": "Language",
-        "PT": "Idioma"
-    },
-    "market_data_source": {
-        "EN": "Market Data Source",
-        "PT": "Fonte de Dados do Mercado"
-    },
-    "select_market": {
-        "EN": "Select Market",
-        "PT": "Selecione o Mercado"
-    },
-    "personal_details": {
-        "EN": "Personal Details",
-        "PT": "Dados Pessoais"
-    },
-    "current_savings": {
-        "EN": "Current Savings (Today's Dollars)",
-        "PT": "Poupanca Atual (em Valores de Hoje)"
-    },
-    "income_savings": {
-        "EN": "Income & Savings",
-        "PT": "Renda e Poupanca"
-    },
-    "retirement_spending": {
-        "EN": "Retirement Spending",
-        "PT": "Gastos na Aposentadoria"
-    },
-    "simulation_settings": {
-        "EN": "Simulation Settings",
-        "PT": "Configuracoes da Simulacao"
-    },
-
-    # Parameters
-    "current_age": {
-        "EN": "Current Age",
-        "PT": "Idade Atual"
-    },
-    "retirement_age": {
-        "EN": "Retirement Age",
-        "PT": "Idade de Aposentadoria"
-    },
-    "end_age": {
-        "EN": "End Age (of simulation)",
-        "PT": "Idade Final (da simulacao)"
-    },
-    "pretax_savings": {
-        "EN": "Pre-tax Savings ($)",
-        "PT": "Poupanca Pre-Imposto (R$)"
-    },
-    "posttax_savings": {
-        "EN": "Post-tax Savings ($)",
-        "PT": "Poupanca Pos-Imposto (R$)"
-    },
-    "current_salary": {
-        "EN": "Current Annual Salary ($)",
-        "PT": "Salario Anual Atual (R$)"
-    },
-    "salary_growth_rate": {
-        "EN": "Real Salary Growth Rate (%)",
-        "PT": "Taxa Real de Crescimento Salarial (%)"
-    },
-    "pretax_savings_rate": {
-        "EN": "Pre-tax Savings Rate (%)",
-        "PT": "Taxa de Poupanca Pre-Imposto (%)"
-    },
-    "posttax_savings_rate": {
-        "EN": "Post-tax Savings Rate (%)",
-        "PT": "Taxa de Poupanca Pos-Imposto (%)"
-    },
-    "employer_match_rate": {
-        "EN": "Employer Match Rate (%)",
-        "PT": "Taxa de Contribuicao do Empregador (%)"
-    },
-    "employer_match_cap": {
-        "EN": "Employer Match Cap (% of Salary)",
-        "PT": "Limite de Contribuicao do Empregador (% do Salario)"
-    },
-    "annual_spending": {
-        "EN": "Desired Annual Spending in Retirement ($)",
-        "PT": "Gasto Anual Desejado na Aposentadoria (R$)"
-    },
-    "num_simulations": {
-        "EN": "Number of Monte Carlo Simulations",
-        "PT": "Numero de Simulacoes Monte Carlo"
-    },
-    "run_simulation": {
-        "EN": "Run Simulation",
-        "PT": "Executar Simulacao"
-    },
-    "running_simulations": {
-        "EN": "Running Monte Carlo simulations...",
-        "PT": "Executando simulacoes Monte Carlo..."
-    },
-
-    # Results sections
-    "simulation_summary": {
-        "EN": "Simulation Summary",
-        "PT": "Resumo da Simulacao"
-    },
-    "money_lasts_lifetime": {
-        "EN": "Money Lasts Lifetime",
-        "PT": "Dinheiro Dura a Vida"
-    },
-    "solvent_at_age": {
-        "EN": "Solvent at {age}",
-        "PT": "Solvente aos {age}"
-    },
-    "percentile_5th": {
-        "EN": "5th Percentile",
-        "PT": "Percentil 5"
-    },
-    "percentile_25th": {
-        "EN": "25th Percentile",
-        "PT": "Percentil 25"
-    },
-    "median_balance": {
-        "EN": "Median Balance",
-        "PT": "Saldo Mediano"
-    },
-    "percentile_75th": {
-        "EN": "75th Percentile",
-        "PT": "Percentil 75"
-    },
-    "ruin_warning": {
-        "EN": "Probability of Ruin: {prob:.1f}%. When ruin occurred, the average shortfall was {years:.1f} years.",
-        "PT": "Probabilidade de Ruina: {prob:.1f}%. Quando ocorreu ruina, o deficit medio foi de {years:.1f} anos."
-    },
-
-    # Analytical insights
-    "analytical_insights": {
-        "EN": "Analytical Insights",
-        "PT": "Analises"
-    },
-    "distribution_final_balances": {
-        "EN": "Distribution of Final Balances",
-        "PT": "Distribuicao dos Saldos Finais"
-    },
-    "histogram_title": {
-        "EN": "Histogram of All Possible Final Balances",
-        "PT": "Histograma de Todos os Saldos Finais Possiveis"
-    },
-    "final_portfolio_value": {
-        "EN": "Final Portfolio Value ($)",
-        "PT": "Valor Final do Patrimonio (R$)"
-    },
-    "num_simulations_label": {
-        "EN": "Number of Simulations",
-        "PT": "Numero de Simulacoes"
-    },
-    "percent_of_scenarios": {
-        "EN": "% of Scenarios",
-        "PT": "% dos Cenarios"
-    },
-    "info_histogram_explanation": {
-        "EN": """
-**Understanding This Chart:**
-
-This histogram shows all {num_simulations} simulated retirement outcomes. Each bar shows how often a particular final balance occurred.
-
-**Your Personalized Results:**
-- **Median (50th percentile):** ${median:,.0f} — half of scenarios end above this, half below
-- **Worst 5% of scenarios:** You'd have less than ${p5:,.0f}
-- **Best 5% of scenarios:** You'd have more than ${p95:,.0f}
-
-**How to Read:** Taller bars = more common outcomes. Bars clustered on the right (high values) = robust plan. Bars near zero or spread wide = higher risk.
-""",
-        "PT": """
-**Entendendo Este Grafico:**
-
-Este histograma mostra todos os {num_simulations} resultados simulados de aposentadoria. Cada barra mostra com que frequencia um determinado saldo final ocorreu.
-
-**Seus Resultados Personalizados:**
-- **Mediana (percentil 50):** R${median:,.0f} — metade dos cenarios termina acima disso, metade abaixo
-- **Piores 5% dos cenarios:** Voce teria menos de R${p5:,.0f}
-- **Melhores 5% dos cenarios:** Voce teria mais de R${p95:,.0f}
-
-**Como Ler:** Barras mais altas = resultados mais comuns. Barras agrupadas a direita (valores altos) = plano robusto. Barras perto de zero ou muito espalhadas = maior risco.
-"""
-    },
-    "portfolio_composition": {
-        "EN": "Portfolio Composition at Retirement",
-        "PT": "Composicao do Patrimonio na Aposentadoria"
-    },
-    "what_built_nest_egg": {
-        "EN": "What Built Your Retirement Nest Egg?",
-        "PT": "O Que Construiu Seu Patrimonio de Aposentadoria?"
-    },
-    "initial_savings": {
-        "EN": "Initial Savings",
-        "PT": "Poupanca Inicial"
-    },
-    "total_contributions": {
-        "EN": "Total Contributions",
-        "PT": "Contribuicoes Totais"
-    },
-    "market_growth": {
-        "EN": "Market Growth",
-        "PT": "Crescimento de Mercado"
-    },
-
-    # Portfolio trajectory
-    "portfolio_trajectory": {
-        "EN": "Portfolio Trajectory & Details",
-        "PT": "Trajetoria do Patrimonio e Detalhes"
-    },
-    "balance_trajectories": {
-        "EN": "Balance Trajectories (Median and Percentiles)",
-        "PT": "Trajetorias de Saldo (Mediana e Percentis)"
-    },
-    "portfolio_balance_title": {
-        "EN": "Portfolio Balance Over Time (Inflation-Adjusted)",
-        "PT": "Saldo do Patrimonio ao Longo do Tempo (Ajustado pela Inflacao)"
-    },
-    "age": {
-        "EN": "Age",
-        "PT": "Idade"
-    },
-    "portfolio_balance": {
-        "EN": "Portfolio Balance ($)",
-        "PT": "Saldo do Patrimonio (R$)"
-    },
-    "median_50th": {
-        "EN": "Median (50th)",
-        "PT": "Mediana (50)"
-    },
-    "percentile_95th_legend": {
-        "EN": "95th Percentile",
-        "PT": "Percentil 95"
-    },
-    "percentile_75th_legend": {
-        "EN": "75th Percentile",
-        "PT": "Percentil 75"
-    },
-    "percentile_25th_legend": {
-        "EN": "25th Percentile",
-        "PT": "Percentil 25"
-    },
-    "percentile_5th_legend": {
-        "EN": "5th Percentile",
-        "PT": "Percentil 5"
-    },
-
-    # Survival probability
-    "survival_probability": {
-        "EN": "Survival Probability",
-        "PT": "Probabilidade de Sobrevivencia"
-    },
-    "portfolio_survival_title": {
-        "EN": "Portfolio Survival Probability Over Time",
-        "PT": "Probabilidade de Sobrevivencia do Patrimonio ao Longo do Tempo"
-    },
-    "prob_not_running_out": {
-        "EN": "Probability of Not Running Out of Money (%)",
-        "PT": "Probabilidade de Nao Ficar Sem Dinheiro (%)"
-    },
-
-    # Mortality-adjusted analysis
-    "mortality_adjusted_analysis": {
-        "EN": "Mortality-Adjusted Analysis",
-        "PT": "Analise Ajustada por Mortalidade"
-    },
-    "mortality_description": {
-        "EN": "Combines portfolio survival with actuarial mortality data to answer: what's the probability your money lasts as long as you do?",
-        "PT": "Combina a sobrevivencia do patrimonio com dados atuariais de mortalidade para responder: qual a probabilidade do seu dinheiro durar tanto quanto voce?"
-    },
-    "mortality_curve": {
-        "EN": "Mortality Curve",
-        "PT": "Curva de Mortalidade"
-    },
-    "prob_being_alive": {
-        "EN": "Probability of Being Alive",
-        "PT": "Probabilidade de Estar Vivo"
-    },
-    "alive_at_age_title": {
-        "EN": "P(Alive at Age t | Alive at {age})",
-        "PT": "P(Vivo na Idade t | Vivo aos {age})"
-    },
-    "probability_percent": {
-        "EN": "Probability (%)",
-        "PT": "Probabilidade (%)"
-    },
-    "lifetime_ruin_risk": {
-        "EN": "Lifetime Ruin Risk",
-        "PT": "Risco de Ruina Vitalicio"
-    },
-    "remaining_ruin_risk": {
-        "EN": "Remaining Ruin Risk",
-        "PT": "Risco de Ruina Restante"
-    },
-    "ruin_risk_title": {
-        "EN": "P(Run Out of Money Before Death | Alive at Age t)",
-        "PT": "P(Ficar Sem Dinheiro Antes de Morrer | Vivo na Idade t)"
-    },
-    "at_retirement": {
-        "EN": "At retirement: {value:.1f}%",
-        "PT": "Na aposentadoria: {value:.1f}%"
-    },
-    "mortality_insights": {
-        "EN": """
-    **At Age {end_age} (given you reach retirement):**
-    - P(portfolio survives): **{portfolio_prob:.1f}%**
-    - P(you're alive): **{life_prob:.1f}%**
-    - P(both): **{adjusted_prob:.1f}%**{risk_info}
-
-    **Charts:** The green curve shows P(alive at age t | alive at retirement). The red curve shows P(go broke before death | alive at age t) - this increases over time because surviving longer means you've been consuming savings without dying early.
-    """,
-        "PT": """
-    **Aos {end_age} anos (dado que voce chegou a aposentadoria):**
-    - P(patrimonio sobrevive): **{portfolio_prob:.1f}%**
-    - P(voce esta vivo): **{life_prob:.1f}%**
-    - P(ambos): **{adjusted_prob:.1f}%**{risk_info}
-
-    **Graficos:** A curva verde mostra P(vivo na idade t | vivo na aposentadoria). A curva vermelha mostra P(ficar sem dinheiro antes de morrer | vivo na idade t) - isso aumenta com o tempo porque sobreviver mais significa que voce consumiu poupanca sem morrer cedo.
+def t(key, lang="EN", **kwargs):
     """
-    },
-    "ruin_risk_at_retirement": {
-        "EN": "\n    - **Ruin risk at retirement: {value:.1f}%** - chance of going broke before death",
-        "PT": "\n    - **Risco de ruina na aposentadoria: {value:.1f}%** - chance de falir antes de morrer"
-    },
+    Translates a given key to the specified language.
+    """
+    return translations.get(lang, {}).get(key, key).format(**kwargs)
 
-    # Cash flow table
-    "cash_flow_table": {
-        "EN": "Median Case: Year-by-Year Cash Flow",
-        "PT": "Caso Mediano: Fluxo de Caixa Ano a Ano"
-    },
-    "salary": {
-        "EN": "Salary",
-        "PT": "Salario"
-    },
-    "contribution": {
-        "EN": "Contribution",
-        "PT": "Contribuicao"
-    },
-    "employer_match": {
-        "EN": "Employer Match",
-        "PT": "Contrib. Empregador"
-    },
-    "withdrawal": {
-        "EN": "Withdrawal",
-        "PT": "Saque"
-    },
-    "tax_paid": {
-        "EN": "Tax Paid",
-        "PT": "Imposto Pago"
-    },
-    "real_return": {
-        "EN": "Real Return",
-        "PT": "Retorno Real"
-    },
-    "pretax_balance": {
-        "EN": "Pre-tax Balance",
-        "PT": "Saldo Pre-Imposto"
-    },
-    "posttax_balance": {
-        "EN": "Post-tax Balance",
-        "PT": "Saldo Pos-Imposto"
-    },
-    "total_balance": {
-        "EN": "Total Balance",
-        "PT": "Saldo Total"
-    },
-
-    # Sensitivity analysis
-    "sensitivity_analysis": {
-        "EN": "Sensitivity Analysis",
-        "PT": "Analise de Sensibilidade"
-    },
-    "sensitivity_description": {
-        "EN": "How retirement age and spending affect your success probability.",
-        "PT": "Como a idade de aposentadoria e os gastos afetam sua probabilidade de sucesso."
-    },
-    "running_sensitivity": {
-        "EN": "Running sensitivity grid analysis...",
-        "PT": "Executando analise de sensibilidade..."
-    },
-    "portfolio_survives_title": {
-        "EN": "P(Portfolio Survives to {age})",
-        "PT": "P(Patrimonio Sobrevive ate {age})"
-    },
-    "money_lasts_lifetime_title": {
-        "EN": "P(Money Lasts Your Lifetime)",
-        "PT": "P(Dinheiro Dura Sua Vida)"
-    },
-    "retirement_age_years": {
-        "EN": "Retirement Age (years)",
-        "PT": "Idade de Aposentadoria (anos)"
-    },
-    "spending_change": {
-        "EN": "Spending ($ change)",
-        "PT": "Gastos (mudanca R$)"
-    },
-    "success_rate": {
-        "EN": "Success Rate (%)",
-        "PT": "Taxa de Sucesso (%)"
-    },
-    "sensitivity_warning_low": {
-        "EN": "Warning: All scenarios show less than 50% success rate. Consider significantly reducing spending or increasing savings.",
-        "PT": "Aviso: Todos os cenarios mostram taxa de sucesso inferior a 50%. Considere reduzir significativamente os gastos ou aumentar a poupanca."
-    },
-    "sensitivity_warning_medium": {
-        "EN": "Some scenarios may need adjustment. Look for greener areas on the heatmap for better outcomes.",
-        "PT": "Alguns cenarios podem precisar de ajuste. Procure areas mais verdes no mapa de calor para melhores resultados."
-    },
-
-    # Simulation details
-    "simulation_details": {
-        "EN": "Simulation Details",
-        "PT": "Detalhes da Simulacao"
-    },
-    "years_covered": {
-        "EN": "Years covered by selected market data: {min} to {max}",
-        "PT": "Anos cobertos pelos dados de mercado selecionados: {min} a {max}"
-    },
-    "mean_real_return": {
-        "EN": "Mean real return: {value:.2%}",
-        "PT": "Retorno real medio: {value:.2%}"
-    },
-    "std_real_return": {
-        "EN": "Std dev of real return: {value:.2%}",
-        "PT": "Desvio padrao do retorno real: {value:.2%}"
-    },
-
-    # Historical context
-    "historical_context": {
-        "EN": "Historical Market Context",
-        "PT": "Contexto Historico do Mercado"
-    },
-    "historical_real_returns": {
-        "EN": "Historical Real Returns - {market}",
-        "PT": "Retornos Reais Historicos - {market}"
-    },
-    "year": {
-        "EN": "Year",
-        "PT": "Ano"
-    },
-    "real_return_percent": {
-        "EN": "Real Return (%)",
-        "PT": "Retorno Real (%)"
-    },
-    "key_historical_events": {
-        "EN": "Key Historical Events",
-        "PT": "Eventos Historicos Importantes"
-    },
-    "event": {
-        "EN": "Event",
-        "PT": "Evento"
-    },
-    "description": {
-        "EN": "Description",
-        "PT": "Descricao"
-    },
-
-    # Stress test
-    "stress_test_title": {
-        "EN": "Stress Test: Your Portfolio During Historical Crises",
-        "PT": "Teste de Estresse: Seu Patrimonio Durante Crises Historicas"
-    },
-    "stress_test_description": {
-        "EN": "Simulates your portfolio using actual historical returns from each crisis - what if you retired right before a crash?",
-        "PT": "Simula seu patrimonio usando retornos historicos reais de cada crise - e se voce se aposentasse logo antes de uma queda?"
-    },
-    "stress_test_chart_title": {
-        "EN": "Portfolio Stress Test: What If You Retired During These Events?",
-        "PT": "Teste de Estresse: E Se Voce Se Aposentasse Durante Esses Eventos?"
-    },
-    "years_in_retirement": {
-        "EN": "Years in Retirement",
-        "PT": "Anos na Aposentadoria"
-    },
-    "stress_test_results": {
-        "EN": "Stress Test Results",
-        "PT": "Resultados do Teste de Estresse"
-    },
-    "starting_balance": {
-        "EN": "Starting Balance",
-        "PT": "Saldo Inicial"
-    },
-    "outcome": {
-        "EN": "Outcome",
-        "PT": "Resultado"
-    },
-    "survived": {
-        "EN": "Survived (${balance:,.0f} remaining)",
-        "PT": "Sobreviveu (R${balance:,.0f} restantes)"
-    },
-    "depleted": {
-        "EN": "Depleted after {years} years",
-        "PT": "Esgotado apos {years} anos"
-    },
-    "stress_all_survived": {
-        "EN": "Your portfolio would have survived all {total} historical stress scenarios.",
-        "PT": "Seu patrimonio teria sobrevivido a todos os {total} cenarios de estresse historicos."
-    },
-    "stress_all_failed": {
-        "EN": "Your portfolio would have been depleted in all {total} historical stress scenarios. Consider reducing spending or increasing savings.",
-        "PT": "Seu patrimonio teria sido esgotado em todos os {total} cenarios de estresse historicos. Considere reduzir gastos ou aumentar poupanca."
-    },
-    "stress_partial": {
-        "EN": "Your portfolio survived {survivors} of {total} historical stress scenarios.",
-        "PT": "Seu patrimonio sobreviveu a {survivors} de {total} cenarios de estresse historicos."
-    },
-
-    # Download report
-    "download_report": {
-        "EN": "Download Report",
-        "PT": "Baixar Relatorio"
-    },
-    "generate_pdf": {
-        "EN": "Generate PDF Report",
-        "PT": "Gerar Relatorio PDF"
-    },
-    "generating_pdf": {
-        "EN": "Generating PDF...",
-        "PT": "Gerando PDF..."
-    },
-    "download_pdf": {
-        "EN": "Download PDF",
-        "PT": "Baixar PDF"
-    },
-
-    # Gauge captions
-    "caption_money_lasts": {
-        "EN": "P(money lasts your lifetime)",
-        "PT": "P(dinheiro dura sua vida)"
-    },
-    "caption_portfolio_survives": {
-        "EN": "P(portfolio survives to {age})",
-        "PT": "P(patrimonio sobrevive ate {age})"
-    },
-
-    # Info boxes - Assumptions explanations
-    "info_market_assumptions_us": {
-        "EN": """
-**Data Sources & Assumptions (US Market):**
-- **Market Returns:** S&P 500 real returns (inflation-adjusted) from 1928 to present
-- **Mortality Table:** US Social Security Administration 2021 life tables
-- **Tax Calculation:** US federal income tax brackets (2024), with standard deduction of $14,600
-- **Withdrawal Strategy:** Post-tax accounts (Roth) are used first, then pre-tax accounts (401k/IRA)
-""",
-        "PT": """
-**Fontes de Dados e Premissas (Mercado EUA):**
-- **Retornos de Mercado:** Retornos reais do S&P 500 (ajustados pela inflacao) de 1928 ate o presente
-- **Tabua de Mortalidade:** Tabuas de vida da Previdencia Social dos EUA 2021
-- **Calculo de Impostos:** Faixas de imposto de renda federal dos EUA (2024), com deducao padrao de $14.600
-- **Estrategia de Saque:** Contas pos-imposto (Roth) sao usadas primeiro, depois contas pre-imposto (401k/IRA)
-"""
-    },
-    "info_market_assumptions_br": {
-        "EN": """
-**Data Sources & Assumptions (Brazil Market):**
-- **Market Returns:** CDI real returns (inflation-adjusted) from 1995 to present
-- **Mortality Table:** Brazil IBGE 2021 life tables
-- **Tax Calculation:** Flat 10% tax rate on pre-tax withdrawals (simplified PGBL/VGBL taxation)
-- **Withdrawal Strategy:** Post-tax accounts (VGBL) are used first, then pre-tax accounts (PGBL)
-""",
-        "PT": """
-**Fontes de Dados e Premissas (Mercado Brasil):**
-- **Retornos de Mercado:** Retornos reais do CDI (ajustados pela inflacao) de 1995 ate o presente
-- **Tabua de Mortalidade:** Tabuas de vida do IBGE Brasil 2021
-- **Calculo de Impostos:** Aliquota fixa de 10% sobre saques pre-imposto (tributacao simplificada PGBL/VGBL)
-- **Estrategia de Saque:** Contas pos-imposto (VGBL) sao usadas primeiro, depois contas pre-imposto (PGBL)
-"""
-    },
-    "info_sensitivity_explanation": {
-        "EN": """
-**How to Read the Sensitivity Heatmaps:**
-
-The heatmaps show how your success probability changes when you adjust retirement age or spending:
-- **X-axis (horizontal):** Change in retirement age from your current selection (e.g., "+2" means retiring 2 years later)
-- **Y-axis (vertical):** Change in annual spending (e.g., "-10k" means spending $10,000 less per year)
-- **Colors:** Green = high success probability (good), Yellow = moderate risk, Red = high risk of running out of money
-
-**Example:** If you're at the center (0,0) with 70% success, and the cell at (+2, -10k) shows 90%, retiring 2 years later while spending $10k less would significantly improve your odds.
-
-**Left heatmap:** Shows probability of portfolio surviving to end age (ignores mortality)
-**Right heatmap:** Shows probability of money lasting your lifetime (accounts for mortality - more realistic)
-""",
-        "PT": """
-**Como Ler os Mapas de Calor de Sensibilidade:**
-
-Os mapas de calor mostram como sua probabilidade de sucesso muda quando voce ajusta a idade de aposentadoria ou os gastos:
-- **Eixo X (horizontal):** Mudanca na idade de aposentadoria em relacao a sua selecao atual (ex: "+2" significa aposentar 2 anos depois)
-- **Eixo Y (vertical):** Mudanca nos gastos anuais (ex: "-10k" significa gastar R$10.000 a menos por ano)
-- **Cores:** Verde = alta probabilidade de sucesso (bom), Amarelo = risco moderado, Vermelho = alto risco de ficar sem dinheiro
-
-**Exemplo:** Se voce esta no centro (0,0) com 70% de sucesso, e a celula em (+2, -10k) mostra 90%, aposentar 2 anos depois gastando R$10k a menos melhoraria significativamente suas chances.
-
-**Mapa da esquerda:** Mostra probabilidade do patrimonio sobreviver ate a idade final (ignora mortalidade)
-**Mapa da direita:** Mostra probabilidade do dinheiro durar sua vida (considera mortalidade - mais realista)
-"""
-    },
-}
-
-# Help text for parameters (tooltips)
-HELP_TEXT = {
-    "current_age": {
-        "EN": "Your current age. The simulation starts from this point and projects forward.",
-        "PT": "Sua idade atual. A simulacao comeca a partir deste ponto e projeta para o futuro."
-    },
-    "retirement_age": {
-        "EN": "The age when you plan to stop working and start withdrawing from savings. Before this age, you'll be saving; after, you'll be spending.",
-        "PT": "A idade em que voce planeja parar de trabalhar e comecar a sacar da poupanca. Antes dessa idade, voce estara poupando; depois, estara gastando."
-    },
-    "end_age": {
-        "EN": "The final age for the simulation. This should be your expected lifespan or beyond. The simulation checks if your money lasts until this age.",
-        "PT": "A idade final da simulacao. Deve ser sua expectativa de vida ou alem. A simulacao verifica se seu dinheiro dura ate essa idade."
-    },
-    "pretax_savings": {
-        "EN": "Current balance in tax-deferred accounts (401k, Traditional IRA). Withdrawals from these accounts are taxed as income.",
-        "PT": "Saldo atual em contas com imposto diferido (PGBL, previdencia privada). Saques dessas contas sao tributados como renda."
-    },
-    "posttax_savings": {
-        "EN": "Current balance in after-tax accounts (Roth IRA, brokerage). Withdrawals from these accounts are tax-free.",
-        "PT": "Saldo atual em contas pos-imposto (VGBL, investimentos tributados). Saques dessas contas nao tem imposto adicional."
-    },
-    "current_salary": {
-        "EN": "Your current annual gross salary before taxes. Used to calculate savings contributions until retirement.",
-        "PT": "Seu salario anual bruto atual antes dos impostos. Usado para calcular contribuicoes de poupanca ate a aposentadoria."
-    },
-    "salary_growth_rate": {
-        "EN": "Expected annual salary growth ABOVE inflation (real growth). For example, 1% means your purchasing power increases 1% per year.",
-        "PT": "Crescimento salarial anual esperado ACIMA da inflacao (crescimento real). Por exemplo, 1% significa que seu poder de compra aumenta 1% ao ano."
-    },
-    "pretax_savings_rate": {
-        "EN": "Percentage of salary contributed to pre-tax retirement accounts each year. These contributions reduce your taxable income now.",
-        "PT": "Porcentagem do salario contribuida para contas de aposentadoria pre-imposto a cada ano. Essas contribuicoes reduzem sua renda tributavel agora."
-    },
-    "posttax_savings_rate": {
-        "EN": "Percentage of salary contributed to after-tax savings each year. These contributions are made with already-taxed money.",
-        "PT": "Porcentagem do salario contribuida para poupanca pos-imposto a cada ano. Essas contribuicoes sao feitas com dinheiro ja tributado."
-    },
-    "employer_match_rate": {
-        "EN": "Percentage of your contribution that your employer matches. 100% means they match dollar-for-dollar up to the cap.",
-        "PT": "Porcentagem da sua contribuicao que seu empregador iguala. 100% significa que eles igualam real por real ate o limite."
-    },
-    "employer_match_cap": {
-        "EN": "Maximum percentage of your salary that the employer will match. For example, 6% means they'll match up to 6% of your salary.",
-        "PT": "Porcentagem maxima do seu salario que o empregador ira igualar. Por exemplo, 6% significa que eles igualarao ate 6% do seu salario."
-    },
-    "annual_spending": {
-        "EN": "How much you want to spend each year in retirement (in today's dollars). This stays constant in real terms throughout retirement.",
-        "PT": "Quanto voce quer gastar por ano na aposentadoria (em valores de hoje). Isso permanece constante em termos reais durante a aposentadoria."
-    },
-    "num_simulations": {
-        "EN": "Number of random scenarios to simulate. More simulations = more accurate results but slower. 1000 is usually sufficient.",
-        "PT": "Numero de cenarios aleatorios para simular. Mais simulacoes = resultados mais precisos, mas mais lento. 1000 geralmente e suficiente."
-    },
-    "select_market": {
-        "EN": "Choose which historical market data to use. US uses S&P 500 returns; Brazil uses CDI returns. This affects both returns and tax calculations.",
-        "PT": "Escolha quais dados historicos de mercado usar. EUA usa retornos do S&P 500; Brasil usa retornos do CDI. Isso afeta retornos e calculos de impostos."
-    },
-
-    # Results help text
-    "money_lasts_lifetime": {
-        "EN": "The probability that your portfolio lasts as long as you live, accounting for both investment risk and mortality. This is the most important metric.",
-        "PT": "A probabilidade de que seu patrimonio dure tanto quanto voce viva, considerando tanto o risco de investimento quanto a mortalidade. Esta e a metrica mais importante."
-    },
-    "solvent_at_age": {
-        "EN": "The probability that your portfolio still has money at the end age, regardless of whether you're alive. Useful for legacy planning.",
-        "PT": "A probabilidade de que seu patrimonio ainda tenha dinheiro na idade final, independente de voce estar vivo. Util para planejamento de heranca."
-    },
-    "percentile_5th": {
-        "EN": "In the worst 5% of scenarios, your final balance would be at or below this amount. This represents a pessimistic outcome.",
-        "PT": "Nos piores 5% dos cenarios, seu saldo final seria igual ou inferior a este valor. Isso representa um resultado pessimista."
-    },
-    "percentile_25th": {
-        "EN": "In 25% of scenarios, your final balance would be at or below this amount. This represents a below-average outcome.",
-        "PT": "Em 25% dos cenarios, seu saldo final seria igual ou inferior a este valor. Isso representa um resultado abaixo da media."
-    },
-    "median_balance": {
-        "EN": "The middle outcome - half of simulations end above this, half below. This is your 'expected' final balance.",
-        "PT": "O resultado do meio - metade das simulacoes termina acima disso, metade abaixo. Este e seu saldo final 'esperado'."
-    },
-    "percentile_75th": {
-        "EN": "In 75% of scenarios, your final balance would be at or below this amount. 25% of outcomes are even better than this.",
-        "PT": "Em 75% dos cenarios, seu saldo final seria igual ou inferior a este valor. 25% dos resultados sao ainda melhores."
-    },
-    "distribution_final_balances": {
-        "EN": "Shows the range of possible final portfolio values across all simulations. Wider distributions mean more uncertainty.",
-        "PT": "Mostra a faixa de valores finais possiveis do patrimonio em todas as simulacoes. Distribuicoes mais largas significam mais incerteza."
-    },
-    "portfolio_composition": {
-        "EN": "Shows how much of your retirement nest egg comes from initial savings, your contributions, and market growth.",
-        "PT": "Mostra quanto do seu patrimonio de aposentadoria vem da poupanca inicial, suas contribuicoes e crescimento de mercado."
-    },
-    "balance_trajectories": {
-        "EN": "Shows how your portfolio value changes over time across different scenarios (optimistic, median, pessimistic).",
-        "PT": "Mostra como o valor do seu patrimonio muda ao longo do tempo em diferentes cenarios (otimista, mediano, pessimista)."
-    },
-    "survival_probability": {
-        "EN": "Shows the percentage of simulations where your portfolio still has money at each age. A declining curve means increasing risk of ruin.",
-        "PT": "Mostra a porcentagem de simulacoes onde seu patrimonio ainda tem dinheiro em cada idade. Uma curva decrescente significa risco crescente de ruina."
-    },
-    "mortality_curve": {
-        "EN": "Based on actuarial life tables, shows your probability of being alive at each future age given you're alive at retirement.",
-        "PT": "Baseado em tabuas atuariais, mostra sua probabilidade de estar vivo em cada idade futura dado que voce esta vivo na aposentadoria."
-    },
-    "lifetime_ruin_risk": {
-        "EN": "Shows the probability of running out of money before death at each age. Lower is better. This decreases over time as you get closer to the end.",
-        "PT": "Mostra a probabilidade de ficar sem dinheiro antes de morrer em cada idade. Menor e melhor. Isso diminui ao longo do tempo conforme voce se aproxima do fim."
-    },
-    "sensitivity_analysis": {
-        "EN": "Heatmaps showing how changing retirement age or spending affects success probability. Green = good, red = risky.",
-        "PT": "Mapas de calor mostrando como mudar a idade de aposentadoria ou gastos afeta a probabilidade de sucesso. Verde = bom, vermelho = arriscado."
-    },
-    "stress_test": {
-        "EN": "Shows what would happen if you retired right before major historical crises. Tests your plan against real worst-case scenarios.",
-        "PT": "Mostra o que aconteceria se voce se aposentasse logo antes de grandes crises historicas. Testa seu plano contra cenarios reais de pior caso."
-    },
-}
-
-
-def t(key: str, lang: str = "EN", **kwargs) -> str:
-    """Get translated text for a key."""
-    text = TRANSLATIONS.get(key, {}).get(lang, key)
-    if kwargs:
-        text = text.format(**kwargs)
-    return text
-
-
-def h(key: str, lang: str = "EN") -> str:
-    """Get help text for a key."""
-    return HELP_TEXT.get(key, {}).get(lang, "")
+def h(key, lang="EN", **kwargs):
+    """
+    Gets the help text for a given key in the specified language.
+    """
+    return help_texts.get(lang, {}).get(key, "").format(**kwargs)
