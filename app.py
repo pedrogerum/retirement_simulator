@@ -322,9 +322,8 @@ if 'results' in st.session_state and st.session_state['results']:
         fig_trajectories.add_trace(go.Scatter(x=percentiles_df.index, y=percentiles_df[f'{p_val}th'], mode='lines', name=t(f"percentile_{p_val}th_legend", L), line=dict(color=color, width=4 if p_val==50 else 2, dash=dash)))
     # Add retirement age marker
     if params.retirement_age in percentiles_df.index:
-        retirement_balance = percentiles_df.loc[params.retirement_age, '50th']
         fig_trajectories.add_vline(x=params.retirement_age, line_dash="dash", line_color="gray", opacity=0.7)
-        fig_trajectories.add_annotation(x=params.retirement_age, y=retirement_balance, text=f"Retirement: ${retirement_balance:,.0f}", showarrow=True, arrowhead=2, ay=-40)
+        fig_trajectories.add_annotation(x=params.retirement_age, y=1, yref="paper", text="Retirement", showarrow=False, yanchor="bottom")
     fig_trajectories.update_layout(title=t("portfolio_balance_title", L), xaxis_title=t("age", L), yaxis_title=t("portfolio_balance", L), hovermode="x unified", margin=dict(r=100))
     st.plotly_chart(fig_trajectories, use_container_width=True)
     figs.append(fig_trajectories)
